@@ -39,6 +39,12 @@ function Login() {
             Enter your credentials to access your account.
           </CardDescription>
         </CardHeader>
+        <div className="flex items-center justify-center space-x-4 mb-4">
+          <Button className="flex items-center justify-center space-x-2" variant="outline">
+            <ComputerIcon className="h-5 w-5" />
+            <span>Sign in with Microsoft</span>
+          </Button>
+        </div>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
