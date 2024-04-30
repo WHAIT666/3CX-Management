@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
 import NotFound from './pages/Notfound/404';
@@ -13,12 +13,21 @@ import Office from './pages/Dashboard/Office';
 import ForgotPassword from './pages/Login/ForgotPassword'; // Import ForgotPassword component
 
 function AppRouter() {
+  // Verifica se o usuário está autenticado
+  const isAuthenticated = () => {
+    // Implemente a lógica de autenticação aqui
+    // Por exemplo, verificar se o usuário possui um token de autenticação válido
+    return false; // Retorne true se o usuário estiver autenticado, caso contrário, retorne false
+  };
+
   return (
     <Router>
       <Routes>
+        {/* Redireciona para a página de login se não estiver autenticado */}
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} /> // Add route for ForgotPassword
-        <Route path="/dashboard/*" element={<Dashboard />}>
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/dashboard/*" element={isAuthenticated() ? <Dashboard /> : <Navigate to="/login" />} >
           <Route path="team" element={<Team />} />
           <Route path="chat" element={<Chat />} />
           <Route path="conferences" element={<Conferences />} />
