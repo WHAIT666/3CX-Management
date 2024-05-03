@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate instead of useHistory
 import { getAccessToken } from '../../lib/auth';
 import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useTheme } from "@/components/ui/theme-provider";
-import loginImage from "../../assets/techbase.png"
+import loginImage from "../../assets/techbase.png";
 
 function Login() {
+  const navigate = useNavigate(); // Initialize useNavigate
   const { theme } = useTheme();
   const [usernameOrExtension, setUsernameOrExtension] = useState('');
   const [password, setPassword] = useState('');
-
-  const handleSubmit = async (event) => {
+  
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       const accessToken = await getAccessToken(usernameOrExtension, password, '');
       console.log(accessToken);
-      // Here you would typically store the access token somewhere and redirect the user
+      // Redirect to the dashboard after successful login
+      navigate('/dashboard');
     } catch (error) {
       console.error(error);
       // Show an error message to the user
@@ -45,7 +48,7 @@ function Login() {
             <span>Sign in with Microsoft</span>
           </Button>
         </div>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogin}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="usernameOrExtension">Email or Extension Number</Label>
