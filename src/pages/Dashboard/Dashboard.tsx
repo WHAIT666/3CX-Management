@@ -8,112 +8,112 @@ export default function Component() {
     <div key="1" className="flex min-h-screen">
       <div className="hidden lg:block border-r bg-gray-100/40 dark:bg-gray-800/40 w-64 p-4">
         <div className="flex flex-col gap-4">
-          <Link className="flex items-center gap-2 font-semibold" href="#">
+          <Link className="flex items-center gap-2 font-semibold" to="#">
             <Package2Icon className="h-8 w-8" />
             <span>3CX Admin Console</span>
           </Link>
           <nav className="grid gap-1">
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <LayoutDashboardIcon className="h-6 w-6" />
               Dashboard
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <UsersIcon className="h-6 w-6" />
               Users
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <HeadphonesIcon className="h-6 w-6" />
               Voice & Chat
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <PhoneIcon className="h-6 w-6" />
               Phones
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <PhoneOutgoingIcon className="h-6 w-6" />
               Outbound Rules
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <BuildingIcon className="h-6 w-6" />
               Departments
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <ClockIcon className="h-6 w-6" />
               Office Hours
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <PhoneCallIcon className="h-6 w-6" />
               Call Handling
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <BarChartIcon className="h-6 w-6" />
               Reports
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <ActivityIcon className="h-6 w-6" />
               Event Log
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <HeadphonesIcon className="h-6 w-6" />
               Recordings
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <DatabaseBackupIcon className="h-6 w-6" />
               Backup
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <ImportIcon className="h-6 w-6" />
               Integrations
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <SettingsIcon className="h-6 w-6" />
               Advanced
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              href="#"
+              to="#"
             >
               <ServerIcon className="h-6 w-6" />
               System
@@ -123,7 +123,7 @@ export default function Component() {
       </div>
       <div className="flex-1 flex flex-col">
         <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
-          <Link className="lg:hidden" href="#">
+          <Link className="lg:hidden" to="#">
             <Package2Icon className="h-8 w-8" />
             <span className="sr-only">Home</span>
           </Link>
@@ -229,7 +229,7 @@ export default function Component() {
                 </div>
                 <div className="border-b border-gray-200 dark:border-gray-700 pb-4 text-sm flex items-center gap-2">
                   Call Log
-                  <span className="ml-auto bg-yellow-200 p-1 rounded">Purge 1 Calls</span>
+                  <span className="ml-auto bg-gray-100 text-gray-800 px-2 rounded">Purge 1 Calls</span>
                 </div>
               </div>
             </CardContent>
