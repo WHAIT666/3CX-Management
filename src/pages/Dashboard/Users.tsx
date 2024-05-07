@@ -1,28 +1,26 @@
-
 import { BrowserRouter as Router, Link, Routes, Route } from "react-router-dom";
-import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card"
-import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
+import Users from "../../components/ui/UsersComponent"
 
 export default function Component() {
   return (
     <div key="1" className="flex min-h-screen">
       <div className="hidden lg:block border-r bg-gray-100/40 dark:bg-gray-800/40 w-64 p-4">
         <div className="flex flex-col gap-4">
-          <Link className="flex items-center gap-2 font-semibold" to="#">
+          <Link className="flex items-center gap-2 font-semibold" to="/Dashboard">
             <Package2Icon className="h-8 w-8" />
             <span>3CX Admin Console</span>
           </Link>
           <nav className="grid gap-1">
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              to="#"
+              to="/dashboard"
             >
               <LayoutDashboardIcon className="h-6 w-6" />
               Dashboard
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              to="/dashboard/users"
+              to="/users"
             >
               <UsersIcon className="h-6 w-6" />
               Users
@@ -128,222 +126,14 @@ export default function Component() {
             <span className="sr-only">Home</span>
           </Link>
           <div className="flex-1">
-            <h1 className="font-semibold text-lg">Dashboard</h1>
+            <h1 className="font-semibold text-lg">Users</h1>
           </div>
           <div className="flex items-center gap-2">
             <span>Help</span>
             <MessageCircleQuestionIcon className="h-6 w-6" />
           </div>
         </header>
-        <main className="flex-1 grid gap-4 p-4 md:gap-8 md:p-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <div className="flex items-center">
-                <ServerIcon className="w-6 h-6 text-gray-500 dark:text-gray-400 mr-2" />
-                <CardTitle className="text-lg font-bold">System Information</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-4">
-                  <p className="text-sm">Text Field</p>
-                  <p className="text-sm flex items-center">
-                    3CX FQDN techbasexapi.3cx.pt
-                    <CopyIcon className="w-5 h-5 ml-2 cursor-pointer" />
-                    <span className="ml-auto">Install Type On Premise</span>
-                  </p>
-                  <p className="text-sm flex items-center">
-                    IPv4 213.146.217.11 Static
-                    <CopyIcon className="w-5 h-5 ml-2 cursor-pointer" />
-                    <span className="ml-auto">
-                      IPv6
-                      <span className="bg-blue-500 text-white px-2 rounded ml-2">N/A</span>
-                    </span>
-                  </p>
-                  <p className="text-sm flex items-center">
-                    Trunks
-                    <InfoIcon className="w-5 h-5 text-red-500 ml-2" />
-                    <span className="ml-auto flex items-center">
-                      Phones
-                      <CircleCheckIcon className="w-5 h-5 text-green-500 ml-2" />
-                    </span>
-                  </p>
-                </div>
-                <div className="space-y-4">
-                  <p className="text-sm">
-                    License Owner techbasexapi@techbase.pt
-                    <span className="ml-auto">Version 20.0 Update 1 (Build 721 Beta)</span>
-                  </p>
-                  <p className="text-sm">Text Field</p>
-                  <p className="text-sm flex items-center">
-                    Active Calls
-                    <span className="bg-green-500 text-white px-2 rounded">0/4</span>
-                    <span className="ml-auto">Inbound Rules Report</span>
-                  </p>
-                  <p className="text-sm flex items-center">
-                    System Extensions
-                    <CircleCheckIcon className="w-5 h-5 text-green-500 ml-2" />
-                    <span
-                      style={{
-                        "marginLeft": "auto",
-                      }}
-                    >
-                      Audit Log
-                      <span className="bg-green-500 text-white px-2 rounded ml-2">ENABLED</span>
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <div className="flex items-center">
-                <SettingsIcon className="w-6 h-6 text-gray-500 dark:text-gray-400 mr-2" />
-                <CardTitle className="text-lg font-bold">System Maintenance</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4 text-sm">
-                  <p className="flex items-center gap-2">
-                    You're up to date. Last Checked: 04/29/2024 3:57 PM
-                    <CircleCheckIcon className="w-5 h-5 text-green-500" />
-                    <span className="ml-auto bg-green-500 text-white px-2 rounded flex items-center">
-                      AUTO UPDATES ENABLED
-                    </span>
-                  </p>
-                </div>
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4 text-sm">
-                  <p className="flex items-center gap-2">
-                    Automatic Backup
-                    <span className="ml-auto bg-green-500 text-white px-2 rounded">ENABLED</span>
-                    <span className="bg-gray-100 text-gray-800 px-2 rounded">May 6, 2024, 4:40:24 AM</span>
-                  </p>
-                </div>
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4 text-sm">
-                  <p>
-                    <span className="ml-auto">Recordings</span>
-                    <span className="bg-green-500 text-white px-2 rounded ml-2 float-right">00 / 5.00 GB</span>
-                  </p>
-                </div>
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4 text-sm">
-                  <p className="flex items-center gap-2">
-                    Firmware repository is clean. Nothing to delete
-                    <span className="ml-auto">Cleanup</span>
-                    <TrashIcon className="w-5 h-5" />
-                  </p>
-                </div>
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4 text-sm flex items-center gap-2">
-                  Chat Log
-                  <span className="ml-auto bg-red-500 text-white p-1 rounded">DISABLED</span>
-                </div>
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4 text-sm flex items-center gap-2">
-                  Call Log
-                  <span className="ml-auto bg-yellow-200 p-1 rounded">Purge 1 Calls</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <div className="flex items-center">
-                <WrenchIcon className="w-6 h-6 text-gray-500 dark:text-gray-400 mr-2" />
-                <CardTitle className="text-lg font-bold">Troubleshooting</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                  <p className="flex items-center gap-2">
-                    Services
-                    <CircleCheckIcon className="w-5 h-5 text-green-500" />
-                    <span className="ml-auto">Restart OS</span>
-                    <PowerIcon className="w-5 h-5 text-red-500" />
-                  </p>
-                </div>
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                  <p className="flex items-center gap-2">
-                    Capture
-                    <PlayIcon className="w-5 h-5 text-green-500 ml-2" />
-                    <span className="ml-auto">Support Info</span>
-                    <MailIcon className="w-5 h-5 text-blue-500" />
-                  </p>
-                </div>
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                  <p className="flex items-center gap-2">
-                    Logging Level
-                    <FileIcon className="w-5 h-5 text-blue-500" />
-                    <span className="ml-auto">Firewall</span>
-                    <InfoIcon className="w-5 h-5 text-red-500" />
-                  </p>
-                </div>
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                  <p className="flex items-center gap-2">
-                    Export System Health
-                    <DownloadIcon className="w-5 h-5 text-blue-500" />
-                    <span className="ml-auto">Perform DB Maintenance</span>
-                    <DatabaseIcon className="w-5 h-5 text-green-500" />
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <div className="flex items-center">
-                <ActivityIcon className="w-6 h-6 text-gray-500 dark:text-gray-400 mr-2" />
-                <CardTitle className="text-lg font-bold">Event Log</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Level</TableHead>
-                    <TableHead>Event ID</TableHead>
-                    <TableHead>Date & Time</TableHead>
-                    <TableHead>Source</TableHead>
-                    <TableHead>Department</TableHead>
-                    <TableHead>Details</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      <InfoIcon className="w-5 h-5 text-blue-500" />
-                    </TableCell>
-                    <TableCell>1234</TableCell>
-                    <TableCell>2023-05-01 10:15 AM</TableCell>
-                    <TableCell>System</TableCell>
-                    <TableCell>IT</TableCell>
-                    <TableCell>System update completed successfully</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <FileWarningIcon className="w-5 h-5 text-yellow-500" />
-                    </TableCell>
-                    <TableCell>5678</TableCell>
-                    <TableCell>2023-04-30 03:22 PM</TableCell>
-                    <TableCell>Application</TableCell>
-                    <TableCell>Sales</TableCell>
-                    <TableCell>Low disk space warning</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <BugIcon className="w-5 h-5 text-red-500" />
-                    </TableCell>
-                    <TableCell>9012</TableCell>
-                    <TableCell>2023-04-29 08:45 AM</TableCell>
-                    <TableCell>Network</TableCell>
-                    <TableCell>Marketing</TableCell>
-                    <TableCell>Network connection lost</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </main>
+       <Users />
       </div>
     </div>
   )
@@ -391,36 +181,6 @@ function BarChartIcon(props) {
 }
 
 
-function BugIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m8 2 1.88 1.88" />
-      <path d="M14.12 3.88 16 2" />
-      <path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1" />
-      <path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6" />
-      <path d="M12 20v-9" />
-      <path d="M6.53 9C4.6 8.8 3 7.1 3 5" />
-      <path d="M6 13H2" />
-      <path d="M3 21c0-2.1 1.7-3.9 3.8-4" />
-      <path d="M20.97 5c0 2.1-1.6 3.8-3.5 4" />
-      <path d="M22 13h-4" />
-      <path d="M17.2 17c2.1.1 3.8 1.9 3.8 4" />
-    </svg>
-  )
-}
-
-
 function BuildingIcon(props) {
   return (
     <svg
@@ -451,7 +211,7 @@ function BuildingIcon(props) {
 }
 
 
-function CircleCheckIcon(props) {
+function ChromeIcon(props) {
   return (
     <svg
       {...props}
@@ -466,7 +226,10 @@ function CircleCheckIcon(props) {
       strokeLinejoin="round"
     >
       <circle cx="12" cy="12" r="10" />
-      <path d="m9 12 2 2 4-4" />
+      <circle cx="12" cy="12" r="4" />
+      <line x1="21.17" x2="12" y1="8" y2="8" />
+      <line x1="3.95" x2="8.54" y1="6.06" y2="14" />
+      <line x1="10.88" x2="15.46" y1="21.94" y2="14" />
     </svg>
   )
 }
@@ -488,6 +251,29 @@ function ClockIcon(props) {
     >
       <circle cx="12" cy="12" r="10" />
       <polyline points="12 6 12 12 16 14" />
+    </svg>
+  )
+}
+
+
+function ComputerIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect width="14" height="8" x="5" y="2" rx="2" />
+      <rect width="20" height="8" x="2" y="14" rx="2" />
+      <path d="M6 18h2" />
+      <path d="M12 18h6" />
     </svg>
   )
 }
@@ -539,28 +325,6 @@ function DatabaseBackupIcon(props) {
 }
 
 
-function DatabaseIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <ellipse cx="12" cy="5" rx="9" ry="3" />
-      <path d="M3 5V19A9 3 0 0 0 21 19V5" />
-      <path d="M3 12A9 3 0 0 0 21 12" />
-    </svg>
-  )
-}
-
-
 function DownloadIcon(props) {
   return (
     <svg
@@ -583,7 +347,7 @@ function DownloadIcon(props) {
 }
 
 
-function FileIcon(props) {
+function EllipsisVerticalIcon(props) {
   return (
     <svg
       {...props}
@@ -597,30 +361,9 @@ function FileIcon(props) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-    </svg>
-  )
-}
-
-
-function FileWarningIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-      <path d="M12 9v4" />
-      <path d="M12 17h.01" />
+      <circle cx="12" cy="12" r="1" />
+      <circle cx="12" cy="5" r="1" />
+      <circle cx="12" cy="19" r="1" />
     </svg>
   )
 }
@@ -668,28 +411,6 @@ function ImportIcon(props) {
 }
 
 
-function InfoIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 16v-4" />
-      <path d="M12 8h.01" />
-    </svg>
-  )
-}
-
-
 function LayoutDashboardIcon(props) {
   return (
     <svg
@@ -713,7 +434,7 @@ function LayoutDashboardIcon(props) {
 }
 
 
-function MailIcon(props) {
+function LockIcon(props) {
   return (
     <svg
       {...props}
@@ -727,8 +448,8 @@ function MailIcon(props) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <rect width="20" height="16" x="2" y="4" rx="2" />
-      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
   )
 }
@@ -842,7 +563,7 @@ function PhoneOutgoingIcon(props) {
 }
 
 
-function PlayIcon(props) {
+function PlusIcon(props) {
   return (
     <svg
       {...props}
@@ -856,13 +577,14 @@ function PlayIcon(props) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <polygon points="6 3 20 12 6 21 6 3" />
+      <path d="M5 12h14" />
+      <path d="M12 5v14" />
     </svg>
   )
 }
 
 
-function PowerIcon(props) {
+function RefreshCwIcon(props) {
   return (
     <svg
       {...props}
@@ -876,8 +598,31 @@ function PowerIcon(props) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M12 2v10" />
-      <path d="M18.4 6.6a9 9 0 1 1-12.77.04" />
+      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+      <path d="M21 3v5h-5" />
+      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+      <path d="M8 16H3v5" />
+    </svg>
+  )
+}
+
+
+function SearchIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
     </svg>
   )
 }
@@ -949,6 +694,28 @@ function TrashIcon(props) {
 }
 
 
+function UploadIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" x2="12" y1="3" y2="15" />
+    </svg>
+  )
+}
+
+
 function UsersIcon(props) {
   return (
     <svg
@@ -967,26 +734,6 @@ function UsersIcon(props) {
       <circle cx="9" cy="7" r="4" />
       <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
-  )
-}
-
-
-function WrenchIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
     </svg>
   )
 }

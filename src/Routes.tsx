@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
 import NotFound from './pages/Notfound/404';
-import Team from './pages/Dashboard/Team';
+import Users from './pages/Dashboard/Users';
 import Chat from './pages/Dashboard/Chat';
 import Conferences from './pages/Dashboard/Conferences';
 import CallHistory from './pages/Dashboard/CallHistory';
@@ -20,7 +20,7 @@ function AppRouter() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/team" element={<Team />} />
+        <Route path="/dashboard/users" element={<Users />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/conferences" element={<Conferences />} />
         <Route path="/call_history" element={<CallHistory />} />
