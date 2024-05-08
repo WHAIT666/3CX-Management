@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BrowserRouter as Router, Link, Routes, Route } from "react-router-dom";
-import Users from "../../components/ui/UsersComponent"
+import Chat from "../../components/ui/VoiceAndChatComponent"
 
 export default function Component() {
   return (
@@ -133,7 +134,7 @@ export default function Component() {
             <MessageCircleQuestionIcon className="h-6 w-6" />
           </div>
         </header>
-       <Users />
+       <Chat />
       </div>
     </div>
   )

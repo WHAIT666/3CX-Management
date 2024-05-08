@@ -3,8 +3,8 @@ import Login from './pages/Login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
 import NotFound from './pages/Notfound/404';
 import Users from './pages/Dashboard/Users';
-import Chat from './pages/Dashboard/Chat';
-import Conferences from './pages/Dashboard/Conferences';
+import Chat from './pages/Dashboard/VoiceAndChat';
+import Phones from './pages/Dashboard/Phones';
 import CallHistory from './pages/Dashboard/CallHistory';
 import Panel from './pages/Dashboard/Panel';
 import Contacts from './pages/Dashboard/Contacts';
@@ -21,8 +21,8 @@ function AppRouter() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/users" element={<Users />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/conferences" element={<Conferences />} />
+        <Route path="/dashboard/voice-and-chat" element={<Chat />} />
+        <Route path="/dashboard/phones" element={<Phones />} />
         <Route path="/call_history" element={<CallHistory />} />
         <Route path="/panel" element={<Panel />} />
         <Route path="/contacts" element={<Contacts />} />

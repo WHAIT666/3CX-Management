@@ -15,7 +15,7 @@ export default function Component() {
           <nav className="grid gap-1">
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              to="#"
+              to="/dashboard"
             >
               <LayoutDashboardIcon className="h-6 w-6" />
               Dashboard
@@ -29,14 +29,14 @@ export default function Component() {
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              to="#"
+              to="/dashboard/voice-and-chat"
             >
               <HeadphonesIcon className="h-6 w-6" />
               Voice & Chat
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              to="#"
+              to="/dashboard/phones"
             >
               <PhoneIcon className="h-6 w-6" />
               Phones
