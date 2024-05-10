@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BrowserRouter as Router, Link, Routes, Route } from "react-router-dom";
-import Chat from "../../components/ui/VoiceAndChatComponent"
+import OutboundRules from "../../components/ui/OutboundRulesComponent"
 
 export default function Component() {
   return (
@@ -42,7 +41,7 @@ export default function Component() {
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              to="/dashboard/outbound-rules"
+              to="#"
             >
               <PhoneOutgoingIcon className="h-6 w-6" />
               Outbound Rules
@@ -127,14 +126,14 @@ export default function Component() {
             <span className="sr-only">Home</span>
           </Link>
           <div className="flex-1">
-            <h1 className="font-semibold text-lg">Voice and Chat</h1>
+            <h1 className="font-semibold text-lg">Outbound Rules</h1>
           </div>
           <div className="flex items-center gap-2">
             <span>Help</span>
             <MessageCircleQuestionIcon className="h-6 w-6" />
           </div>
         </header>
-       <Chat />
+       <OutboundRules />
       </div>
     </div>
   )

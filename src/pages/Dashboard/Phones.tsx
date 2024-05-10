@@ -41,7 +41,7 @@ export default function Component() {
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              to="#"
+              to="/dashboard/outbound-rules"
             >
               <PhoneOutgoingIcon className="h-6 w-6" />
               Outbound Rules
@@ -126,7 +126,7 @@ export default function Component() {
             <span className="sr-only">Home</span>
           </Link>
           <div className="flex-1">
-            <h1 className="font-semibold text-lg">Users</h1>
+            <h1 className="font-semibold text-lg">Phones</h1>
           </div>
           <div className="flex items-center gap-2">
             <span>Help</span>

@@ -5,9 +5,9 @@ import NotFound from './pages/Notfound/404';
 import Users from './pages/Dashboard/Users';
 import Chat from './pages/Dashboard/VoiceAndChat';
 import Phones from './pages/Dashboard/Phones';
-import CallHistory from './pages/Dashboard/CallHistory';
+import OutboundRules from './pages/Dashboard/OutboundRules';
 import Panel from './pages/Dashboard/Panel';
-import Contacts from './pages/Dashboard/Contacts';
+import Contacts from './pages/Dashboard/OutboundRules';
 import Office from './pages/Dashboard/Office';
 import Dasboardtest from './pages/Dashboard/Dashboardtest';
 import ForgotPassword from './pages/Login/ForgotPassword'; // Import ForgotPassword component
@@ -23,7 +23,7 @@ function AppRouter() {
         <Route path="/dashboard/users" element={<Users />} />
         <Route path="/dashboard/voice-and-chat" element={<Chat />} />
         <Route path="/dashboard/phones" element={<Phones />} />
-        <Route path="/call_history" element={<CallHistory />} />
+        <Route path="/dashboard/outbound-rules" element={<OutboundRules />} />
         <Route path="/panel" element={<Panel />} />
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/office" element={<Office />} />
