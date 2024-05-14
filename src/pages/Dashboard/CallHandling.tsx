@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BrowserRouter as Router, Link, Routes, Route } from "react-router-dom";
-import Users from "../../components/ui/UsersComponent"
+import CallHandling from "../../components/ui/CallHandlingComponent"
 
 export default function Component() {
   return (
@@ -126,14 +127,15 @@ export default function Component() {
             <span className="sr-only">Home</span>
           </Link>
           <div className="flex-1">
-            <h1 className="font-semibold text-lg">Users</h1>
+            <h1 className="font-semibold text-lg">Call Handling</h1>
           </div>
+
           <div className="flex items-center gap-2">
             <span>Help</span>
             <MessageCircleQuestionIcon className="h-6 w-6" />
           </div>
         </header>
-       <Users />
+       <CallHandling />
       </div>
     </div>
   )
