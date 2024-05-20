@@ -118,6 +118,20 @@ export default function Component() {
               <ServerIcon className="h-6 w-6" />
               System
             </Link>
+            <Link
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              to="#"
+            >
+              <ViewIcon className="h-6 w-6" />
+              Overview
+            </Link>
+            <Link
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              to="#"
+            >
+              <FileTypeIcon className="h-6 w-6" />
+              Extension Management
+            </Link>
           </nav>
         </div>
       </div>
@@ -948,6 +962,29 @@ function TrashIcon(props) {
   )
 }
 
+function FileTypeIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+      <path d="M9 13v-1h6v1" />
+      <path d="M12 12v6" />
+      <path d="M11 18h2" />
+    </svg>
+  )
+}
+
 
 function UsersIcon(props) {
   return (
@@ -987,6 +1024,28 @@ function WrenchIcon(props) {
       strokeLinejoin="round"
     >
       <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+    </svg>
+  )
+}
+
+function ViewIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M5 12s2.545-5 7-5c4.454 0 7 5 7 5s-2.546 5-7 5c-4.455 0-7-5-7-5z" />
+      <path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+      <path d="M21 17v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2" />
+      <path d="M21 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2" />
     </svg>
   )
 }
