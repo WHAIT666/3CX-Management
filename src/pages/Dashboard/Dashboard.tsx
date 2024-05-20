@@ -1,7 +1,5 @@
 
 import { BrowserRouter as Router, Link, Routes, Route } from "react-router-dom";
-import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card"
-import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
 import Dashboard from "../../components/ui/DashboardComponent";
 
 export default function Component() {
