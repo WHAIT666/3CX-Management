@@ -12,10 +12,6 @@ export default function Component() {
   return (
     <div key="1" className="flex flex-col p-6">
       <div className="flex items-center space-x-2 mb-4">
-        <Button className="bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Add
-        </Button>
       </div>
       <Input
         className="mb-4 bg-white text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:border-gray-600 dark:focus:ring-blue-500"
