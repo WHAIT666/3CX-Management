@@ -8,17 +8,27 @@ import { useTheme } from "@/components/ui/theme-provider";
 import loginImage from "../../assets/techbase.png";
 
 async function loginUser(credentials) {
-  return fetch('http://localhost:8080/auth/login', {
+  return fetch('http://localhost:3000/api/sessions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(credentials)
-  }).then(response => {
+  }).then(async (response) => {
+    const data = await response.json();
     if (!response.ok) {
-      throw new Error('Ocorreu um erro');
+      let errorMessage = 'Login failed';
+      if (response.status === 401) {
+        errorMessage = 'Incorrect email or password';
+      } else if (response.status === 400) {
+        errorMessage = 'Invalid credentials';
+      }
+      throw new Error(errorMessage);
     }
-    return response.json();
+    return {
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken
+    };
   });
 }
 
@@ -29,11 +39,10 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // Effect to check if user is already logged in
   useEffect(() => {
-    const sessionToken = localStorage.getItem('sessionToken');
-    if (sessionToken) {
-      // Redirect to Dashboard if session token exists
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (accessToken && refreshToken) {
       navigate('/dashboard');
     }
   }, [navigate]);
@@ -42,11 +51,13 @@ function Login() {
     event.preventDefault();
     try {
       setError('');
-      const response = await loginUser({ email, password });
-      localStorage.setItem('sessionToken', response.authentication.sessionToken);
+      const { accessToken, refreshToken } = await loginUser({ email, password });
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
       navigate('/dashboard');
     } catch (error) {
       setError(error.message);
+      setPassword(''); // Clear password field on error
     }
   };
 
@@ -75,7 +86,17 @@ function Login() {
               <Label htmlFor="password">Password</Label>
               <Input id="password" placeholder="Password" required type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-            {error && <div className="text-red-500 text-center">{error}</div>}
+            {error && (
+              <div className="text-red-500 text-center">
+                {error === 'Incorrect email or password' ? (
+                  <>Incorrect email or password. Please try again.</>
+                ) : error === 'Invalid credentials' ? (
+                  <>Invalid credentials. Please check your email and password.</>
+                ) : (
+                  <>An error occurred during login. Please try again later.</>
+                )}
+              </div>
+            )}
             <div className="text-center text-sm">
               <a href="/forgot-password" className={`${theme === 'dark' ? 'text-white' : 'text-black'} hover:underline`}>
                 Forgot Password?
