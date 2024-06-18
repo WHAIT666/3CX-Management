@@ -2,6 +2,7 @@
 import { BrowserRouter as Router, Link, Routes, Route } from "react-router-dom";
 import Dashboard from "../../components/ui/DashboardComponent";
 
+
 export default function Component() {
   return (
     <div key="1" className="flex min-h-screen">
