@@ -1,14 +1,39 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-
-
+import { useEffect, useState } from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { fetchUser } from '../../services/api'; // Adjust the import based on your file structure
 
 export default function Component() {
-  
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function getUser() {
+      try {
+        const userData = await fetchUser();
+        setUser(userData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    getUser();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="flex flex-col w-full min-h-screen">
       <div className="p-4 md:p-10">
         <div className="mb-4">
-          <div className="text-lg font-semibold">Welcome, John Doe</div>
+          <div className="text-lg font-semibold">Welcome, {user?.firstName} {user?.lastName}</div>
         </div>
       </div>
       <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] bg-gray-100/40 flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10 dark:bg-gray-800/40">
@@ -76,7 +101,7 @@ export default function Component() {
         </div>
       </main>
     </div>
-  )
+  );
 }
 
 function ActivityIcon(props) {
@@ -95,9 +120,8 @@ function ActivityIcon(props) {
     >
       <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
     </svg>
-  )
+  );
 }
-
 
 function ArrowUpRightIcon(props) {
   return (
@@ -116,9 +140,8 @@ function ArrowUpRightIcon(props) {
       <path d="M7 7h10v10" />
       <path d="M7 17 17 7" />
     </svg>
-  )
+  );
 }
-
 
 function FrameIcon(props) {
   return (
@@ -139,9 +162,8 @@ function FrameIcon(props) {
       <line x1="6" x2="6" y1="2" y2="22" />
       <line x1="18" x2="18" y1="2" y2="22" />
     </svg>
-  )
+  );
 }
-
 
 function PhoneIcon(props) {
   return (
@@ -159,9 +181,8 @@ function PhoneIcon(props) {
     >
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
     </svg>
-  )
+  );
 }
-
 
 function UsersIcon(props) {
   return (
@@ -182,5 +203,5 @@ function UsersIcon(props) {
       <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
     </svg>
-  )
+  );
 }
