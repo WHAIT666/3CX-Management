@@ -8,28 +8,54 @@ import { useTheme } from "@/components/ui/theme-provider";
 import loginImage from "../../assets/techbase.png";
 
 async function loginUser(credentials) {
-  return fetch('http://localhost:3000/api/sessions', {
+  const response = await fetch('http://localhost:3000/api/sessions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(credentials)
-  }).then(async (response) => {
-    const data = await response.json();
-    if (!response.ok) {
-      let errorMessage = 'Login failed';
-      if (response.status === 401) {
-        errorMessage = 'Incorrect email or password';
-      } else if (response.status === 400) {
-        errorMessage = 'Invalid credentials';
-      }
-      throw new Error(errorMessage);
-    }
-    return {
-      accessToken: data.accessToken,
-      refreshToken: data.refreshToken
-    };
   });
+
+  if (!response.ok) {
+    let errorMessage = 'Login failed';
+    if (response.status === 401) {
+      errorMessage = 'Incorrect email or password';
+    } else if (response.status === 400) {
+      errorMessage = 'Invalid credentials';
+    }
+    throw new Error(errorMessage);
+  }
+
+  const data = await response.json();
+  const { accessToken, refreshToken } = data;
+
+  // Fetch 3CX tokens
+  const threeCXResponse = await fetch('https://172.31.0.139/webclient/api/Login/GetAccessToken', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    },
+    body: JSON.stringify({
+      SecurityCode: "1001",
+      Password: "Whait12345!",
+      Username: "8220440@estg.ipp.pt"
+    })
+  });
+
+  if (!threeCXResponse.ok) {
+    throw new Error('Failed to retrieve 3CX tokens');
+  }
+
+  const threeCXData = await threeCXResponse.json();
+  const { access_token: threeCXAccessToken, refresh_token: threeCXRefreshToken } = threeCXData.Token;
+
+  return {
+    accessToken,
+    refreshToken,
+    threeCXAccessToken,
+    threeCXRefreshToken
+  };
 }
 
 function Login() {
@@ -42,7 +68,9 @@ function Login() {
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
-    if (accessToken && refreshToken) {
+    const threeCXAccessToken = localStorage.getItem('threeCXAccessToken');
+    const threeCXRefreshToken = localStorage.getItem('threeCXRefreshToken');
+    if (accessToken && refreshToken && threeCXAccessToken && threeCXRefreshToken) {
       navigate('/dashboard');
     }
   }, [navigate]);
@@ -51,9 +79,11 @@ function Login() {
     event.preventDefault();
     try {
       setError('');
-      const { accessToken, refreshToken } = await loginUser({ email, password });
+      const { accessToken, refreshToken, threeCXAccessToken, threeCXRefreshToken } = await loginUser({ email, password });
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('threeCXAccessToken', threeCXAccessToken);
+      localStorage.setItem('threeCXRefreshToken', threeCXRefreshToken);
       navigate('/dashboard');
     } catch (error) {
       setError(error.message);

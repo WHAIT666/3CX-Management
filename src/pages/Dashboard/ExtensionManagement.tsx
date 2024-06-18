@@ -2,6 +2,7 @@
 import { BrowserRouter as Router, Link, Routes, Route } from "react-router-dom";
 import Dashboard from "../../components/ui/DashboardComponent";
 
+
 export default function Component() {
   return (
     <div key="1" className="flex min-h-screen">
@@ -21,7 +22,7 @@ export default function Component() {
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              to="/dashboard/ExtensionManagement"
+              to="/dashboard"
             >
               <LayoutDashboardIcon className="h-6 w-6" />
               Extension Management

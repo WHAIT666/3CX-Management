@@ -6,6 +6,7 @@ import Users from './pages/Dashboard/Users';
 import ForgotPassword from './pages/Login/ForgotPassword'; // Import ForgotPassword component
 import Phones from './pages/Dashboard/Phones';
 import Groups from './pages/Dashboard/Groups';
+import ExtensionManagement from './pages/Dashboard/ExtensionManagement';
 
 function PrivateRoute({ children }) {
   let navigate = useNavigate();
@@ -26,6 +27,7 @@ function AppRouter() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/dashboard/ExtensionManagement" element={<PrivateRoute><ExtensionManagement /></PrivateRoute>} />
         <Route path="/dashboard/Users" element={<PrivateRoute><Users /></PrivateRoute>} />
         <Route path="/dashboard/Phones" element={<PrivateRoute><Phones /></PrivateRoute>} />
         <Route path="/dashboard/Groups" element={<PrivateRoute><Groups /></PrivateRoute>} />
