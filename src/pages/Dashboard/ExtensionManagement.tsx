@@ -1,6 +1,6 @@
 
 import { BrowserRouter as Router, Link, Routes, Route } from "react-router-dom";
-import Dashboard from "../../components/ui/DashboardComponent";
+import ExtensionManagement from "../../components/ui/ExtensionManagementComponent";
 
 
 export default function Component() {
@@ -22,7 +22,7 @@ export default function Component() {
             </Link>
             <Link
               className="flex items-center gap-2 rounded-md px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-              to="/dashboard"
+              to="/dashboard/ExtensionManagement"
             >
               <LayoutDashboardIcon className="h-6 w-6" />
               Extension Management
@@ -114,14 +114,14 @@ export default function Component() {
             <span className="sr-only">Home</span>
           </Link>
           <div className="flex-1">
-            <h1 className="font-semibold text-lg">Dashboard</h1>
+            <h1 className="font-semibold text-lg">Extension Management</h1>
           </div>
           <div className="flex items-center gap-2">
             <span>Help</span>
             <MessageCircleQuestionIcon className="h-6 w-6" />
           </div>
         </header>
-        <Dashboard />
+        <ExtensionManagement />
        
       </div>
     </div>
