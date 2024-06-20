@@ -13,9 +13,8 @@ export async function fetchUser() {
   return response.json();
 }
 
-
 export async function fetchSystemStatus() {
-  const response = await fetch('https://172.31.0.139/xapi/v1/SystemStatus', {
+  const response = await fetch('http://172.31.0.139/xapi/v1/SystemStatus', {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('threeCXAccessToken')}`, // Use threeCXAccessToken instead of token
     },
@@ -23,6 +22,20 @@ export async function fetchSystemStatus() {
 
   if (!response.ok) {
     throw new Error('Failed to fetch system status');
+  }
+
+  return response.json();
+}
+
+export async function fetchExtensions() {
+  const response = await fetch('http://172.31.0.139/xapi/v1/SystemStatus/Pbx.SystemExtensions()', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('threeCXAccessToken')}`, // Use threeCXAccessToken instead of token
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch extensions');
   }
 
   return response.json();

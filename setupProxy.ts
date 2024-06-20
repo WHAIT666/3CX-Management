@@ -5,7 +5,7 @@ module.exports = function(app: any) {
   app.use(
     '/api',
     createProxyMiddleware({
-      target: 'https://172.31.0.139',
+      target: '172.31.0.139',
       changeOrigin: true,
       pathRewrite: {
         '^/api': '', // Remove /api prefix when forwarding to the target
