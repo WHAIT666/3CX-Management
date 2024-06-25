@@ -1,10 +1,11 @@
-import { useState, useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuCheckboxItem, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
+import { fetchExtensions } from "../../services/api"
 
 export default function Component() {
   const [search, setSearch] = useState("")
@@ -18,80 +19,20 @@ export default function Component() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [editingCentral, setEditingCentral] = useState(null)
-  const centrals = [
-    {
-      id: 1,
-      name: "3CX Central 1",
-      status: "Active",
-      location: "New York",
-      version: "16.0",
-      users: 50,
-      created: "2022-03-15",
-    },
-    {
-      id: 2,
-      name: "3CX Central 2",
-      status: "Inactive",
-      location: "Los Angeles",
-      version: "15.5",
-      users: 30,
-      created: "2021-09-01",
-    },
-    {
-      id: 3,
-      name: "3CX Central 3",
-      status: "Active",
-      location: "Chicago",
-      version: "16.0",
-      users: 75,
-      created: "2023-01-01",
-    },
-    {
-      id: 4,
-      name: "3CX Central 4",
-      status: "Inactive",
-      location: "Miami",
-      version: "15.0",
-      users: 20,
-      created: "2020-06-30",
-    },
-    {
-      id: 5,
-      name: "3CX Central 5",
-      status: "Active",
-      location: "Seattle",
-      version: "16.0",
-      users: 60,
-      created: "2022-11-15",
-    },
-    {
-      id: 6,
-      name: "3CX Central 6",
-      status: "Active",
-      location: "Boston",
-      version: "15.5",
-      users: 40,
-      created: "2021-04-01",
-    },
-    {
-      id: 7,
-      name: "3CX Central 7",
-      status: "Inactive",
-      location: "Atlanta",
-      version: "16.0",
-      users: 25,
-      created: "2023-03-01",
-    },
-    {
-      id: 8,
-      name: "3CX Central 8",
-      status: "Active",
-      location: "Dallas",
-      version: "15.0",
-      users: 55,
-      created: "2020-12-15",
-    },
-  ]
+  const [centrals, setCentrals] = useState([])
+
+  useEffect(() => {
+    async function loadExtensions() {
+      try {
+        const data = await fetchExtensions()
+        setCentrals(data)
+      } catch (error) {
+        console.error('Failed to fetch extensions:', error)
+      }
+    }
+    loadExtensions()
+  }, [])
+
   const filteredCentrals = useMemo(() => {
     return centrals
       .filter((central) => {
@@ -99,8 +40,8 @@ export default function Component() {
         return (
           central.name.toLowerCase().includes(searchValue) ||
           central.status.toLowerCase().includes(searchValue) ||
-          central.location.toLowerCase().includes(searchValue) ||
-          central.version.toLowerCase().includes(searchValue)
+          central.type.toLowerCase().includes(searchValue) ||
+          central.id.toLowerCase().includes(searchValue)
         )
       })
       .filter((central) => {
@@ -122,7 +63,8 @@ export default function Component() {
           return a[sort.key] < b[sort.key] ? 1 : -1
         }
       })
-  }, [search, sort, filters])
+  }, [search, sort, filters, centrals])
+
   const handleSearch = (e) => setSearch(e.target.value)
   const handleSort = (key) => {
     if (sort.key === key) {
@@ -166,8 +108,9 @@ export default function Component() {
   const itemsPerPage = 10
   const totalCentrals = filteredCentrals.length
   const paginatedCentrals = filteredCentrals
+
   return (
-    <div className="flex flex-col gap-4 w-full px-4">
+    <div className="flex flex-col gap-4 w-full">
       <div className="flex items-center gap-4">
         <Input
           placeholder="Search 3CX Centrals..."
@@ -186,84 +129,16 @@ export default function Component() {
             <DropdownMenuLabel>Filters</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuCheckboxItem
-              checked={filters.status.includes("Active")}
-              onCheckedChange={() => handleFilterChange("status", "Active")}
+              checked={filters.status.includes("Registered")}
+              onCheckedChange={() => handleFilterChange("status", "Registered")}
             >
-              Active
+              Registered
             </DropdownMenuCheckboxItem>
             <DropdownMenuCheckboxItem
-              checked={filters.status.includes("Inactive")}
-              onCheckedChange={() => handleFilterChange("status", "Inactive")}
+              checked={filters.status.includes("Unregistered")}
+              onCheckedChange={() => handleFilterChange("status", "Unregistered")}
             >
-              Inactive
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem
-              checked={filters.location.includes("New York")}
-              onCheckedChange={() => handleFilterChange("location", "New York")}
-            >
-              New York
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={filters.location.includes("Los Angeles")}
-              onCheckedChange={() => handleFilterChange("location", "Los Angeles")}
-            >
-              Los Angeles
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={filters.location.includes("Chicago")}
-              onCheckedChange={() => handleFilterChange("location", "Chicago")}
-            >
-              Chicago
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={filters.location.includes("Miami")}
-              onCheckedChange={() => handleFilterChange("location", "Miami")}
-            >
-              Miami
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={filters.location.includes("Seattle")}
-              onCheckedChange={() => handleFilterChange("location", "Seattle")}
-            >
-              Seattle
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={filters.location.includes("Boston")}
-              onCheckedChange={() => handleFilterChange("location", "Boston")}
-            >
-              Boston
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={filters.location.includes("Atlanta")}
-              onCheckedChange={() => handleFilterChange("location", "Atlanta")}
-            >
-              Atlanta
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={filters.location.includes("Dallas")}
-              onCheckedChange={() => handleFilterChange("location", "Dallas")}
-            >
-              Dallas
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem
-              checked={filters.version.includes("16.0")}
-              onCheckedChange={() => handleFilterChange("version", "16.0")}
-            >
-              Version 16.0
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={filters.version.includes("15.5")}
-              onCheckedChange={() => handleFilterChange("version", "15.5")}
-            >
-              Version 15.5
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={filters.version.includes("15.0")}
-              onCheckedChange={() => handleFilterChange("version", "15.0")}
-            >
-              Version 15.0
+              Unregistered
             </DropdownMenuCheckboxItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -284,21 +159,9 @@ export default function Component() {
                 Status
                 {sort.key === "status" && <span className="ml-1">{sort.order === "asc" ? "\u2191" : "\u2193"}</span>}
               </TableHead>
-              <TableHead className="cursor-pointer" onClick={() => handleSort("location")}>
-                Location
-                {sort.key === "location" && <span className="ml-1">{sort.order === "asc" ? "\u2191" : "\u2193"}</span>}
-              </TableHead>
-              <TableHead className="cursor-pointer" onClick={() => handleSort("version")}>
-                Version
-                {sort.key === "version" && <span className="ml-1">{sort.order === "asc" ? "\u2191" : "\u2193"}</span>}
-              </TableHead>
-              <TableHead className="text-right cursor-pointer" onClick={() => handleSort("users")}>
-                Users
-                {sort.key === "users" && <span className="ml-1">{sort.order === "asc" ? "\u2191" : "\u2193"}</span>}
-              </TableHead>
-              <TableHead className="text-right cursor-pointer" onClick={() => handleSort("created")}>
-                Created
-                {sort.key === "created" && <span className="ml-1">{sort.order === "asc" ? "\u2191" : "\u2193"}</span>}
+              <TableHead className="cursor-pointer" onClick={() => handleSort("type")}>
+                Type
+                {sort.key === "type" && <span className="ml-1">{sort.order === "asc" ? "\u2191" : "\u2193"}</span>}
               </TableHead>
               <TableHead className="w-[120px] text-center">Actions</TableHead>
             </TableRow>
@@ -312,14 +175,11 @@ export default function Component() {
                     onCheckedChange={() => handleRowSelect(central.id)}
                   />
                 </TableCell>
-                <TableCell className="font-medium">{central.name}</TableCell>
-                <TableCell className={central.status === "Active" ? "text-green-500" : "text-red-500"}>
+                <TableCell className="font-medium">{central.name} ({central.id})</TableCell>
+                <TableCell className={central.status === "Registered" ? "text-green-500" : "text-red-500"}>
                   {central.status}
                 </TableCell>
-                <TableCell>{central.location}</TableCell>
-                <TableCell>{central.version}</TableCell>
-                <TableCell className="text-right">{central.users}</TableCell>
-                <TableCell className="text-right">{new Date(central.created).toLocaleDateString()}</TableCell>
+                <TableCell>{central.type}</TableCell>
                 <TableCell className="text-center">
                   <div className="flex justify-center">
                     <DropdownMenu>
@@ -370,6 +230,10 @@ export default function Component() {
             <DialogDescription>Update the details for the selected 3CX Central.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4" />
+          <DialogFooter>
+            <Button onClick={() => setShowEditModal(false)}>Cancel</Button>
+            <Button>Save</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
@@ -397,27 +261,6 @@ function FilePenIcon(props) {
   )
 }
 
-
-function FilterIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-    </svg>
-  )
-}
-
-
 function EllipsisVerticalIcon(props) {
   return (
     <svg
@@ -439,7 +282,45 @@ function EllipsisVerticalIcon(props) {
   )
 }
 
+function FilterIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+    </svg>
+  )
+}
 
+function MoveHorizontalIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="18 8 22 12 18 16" />
+      <polyline points="6 8 2 12 6 16" />
+      <line x1="2" x2="22" y1="12" y2="12" />
+    </svg>
+  )
+}
 
 function TrashIcon(props) {
   return (
