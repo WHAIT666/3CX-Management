@@ -38,5 +38,11 @@ export async function fetchExtensions() {
     throw new Error('Failed to fetch extensions');
   }
 
-  return response.json();
+  const data = await response.json();
+  return data.value.map(extension => ({
+    id: extension.Number,
+    name: extension.Name,
+    status: extension.IsRegistered ? 'Registered' : 'Unregistered',
+    type: extension.Type,
+  }));
 }
