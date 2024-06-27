@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Link, Routes, Route } from "react-router-dom";
-import Users from "../../components/ui/UsersComponent"
+import Users from "../../components/ui/Dashboard/UsersComponent"
 
 export default function Component() {
   return (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { fetchSystemStatus } from '../../services/api'; // Adjust the import based on your file structure
+import { fetchSystemStatus } from '../../../services/api'; // Adjust the import based on your file structure
 
 export default function Component() {
   const [systemStatus, setSystemStatus] = useState(null);

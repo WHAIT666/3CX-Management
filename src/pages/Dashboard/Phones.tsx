@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Link, Routes, Route } from "react-router-dom";
-import Phones from "../../components/ui/PhonesComponent"
+import Phones from "../../components/ui/Dashboard/PhonesComponent"
 
 export default function Component() {
   return (

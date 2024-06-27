@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Link, Routes, Route } from "react-router-dom";
-import Groups from "../../components/ui/GroupsComponent"
+import Groups from "../../components/ui/Dashboard/GroupsComponent"
 
 export default function Component() {
   return (

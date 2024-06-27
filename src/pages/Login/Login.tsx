@@ -30,7 +30,7 @@ async function loginUser(credentials) {
   const { accessToken, refreshToken } = data;
 
   // Fetch 3CX tokens
-  const threeCXResponse = await fetch('https://172.31.0.139/webclient/api/Login/GetAccessToken', {
+  const threeCXResponse = await fetch('http://172.31.0.139/webclient/api/Login/GetAccessToken', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

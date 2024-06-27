@@ -1,17 +1,18 @@
+// src/AppRouter.tsx
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Login from './pages/Login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
 import NotFound from './pages/Notfound/404';
 import Users from './pages/Dashboard/Users';
-import ForgotPassword from './pages/Login/ForgotPassword'; // Import ForgotPassword component
+import ForgotPassword from './pages/Login/ForgotPassword';
 import Phones from './pages/Dashboard/Phones';
 import Groups from './pages/Dashboard/Groups';
 import ExtensionManagement from './pages/Dashboard/ExtensionManagement';
 import Register from './pages/Register/Register';
 
-function PrivateRoute({ children }) {
-  let navigate = useNavigate();
-  let accessToken = localStorage.getItem('accessToken'); // replace this with your actual authentication logic
+function PrivateRoute({ children }: { children: React.ReactNode }) {
+  const accessToken = localStorage.getItem('accessToken');
 
   if (!accessToken) {
     return <Navigate to="/login" />;
@@ -38,4 +39,5 @@ function AppRouter() {
     </Router>
   );
 }
+
 export default AppRouter;
