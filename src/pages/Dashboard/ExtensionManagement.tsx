@@ -1,5 +1,3 @@
-// src/pages/Dashboard/ExtensionManagement.tsx
-import React from 'react';
 import Sidebar from '../../components/ui/SideBar/SidebarComponent';
 import Topbar from '../../components/ui/Topbar/TopbarComponent';
 import ExtensionManagementComponent from '../../components/ui/Dashboard/ExtensionManagementComponent';

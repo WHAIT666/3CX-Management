@@ -1,5 +1,3 @@
-// src/pages/Dashboard/Dashboard.tsx
-import React from 'react';
 import Sidebar from '../../components/ui/SideBar/SidebarComponent';
 import Topbar from '../../components/ui/Topbar/TopbarComponent';
 import DashboardComponent from '../../components/ui/Dashboard/DashboardComponent';
