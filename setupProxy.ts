@@ -3,15 +3,18 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 
 module.exports = function(app: any) {
   app.use(
-    '/api',
+    '/api/systemstatus',
     createProxyMiddleware({
-      target: '172.31.0.139',
+      target: 'http://localhost:3000', // Alvo deve ser o teu backend local
       changeOrigin: true,
       pathRewrite: {
-        '^/api': '', // Remove /api prefix when forwarding to the target
+        '^/api/systemstatus': '/api/systemstatus', // Certifica-te de que o caminho está correto
       },
       onProxyReq: (proxyReq, req, res) => {
-        proxyReq.setHeader('Authorization', `Bearer ${localStorage.getItem('threeCXAccessToken')}`);
+        const token = localStorage.getItem('threeCXAccessToken');
+        if (token) {
+          proxyReq.setHeader('Authorization', `Bearer ${token}`);
+        }
       },
     })
   );
