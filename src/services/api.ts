@@ -14,9 +14,11 @@ export async function fetchUser() {
 }
 
 export async function fetchSystemStatus() {
+  const accessToken = localStorage.getItem('accessToken');
+
   const response = await fetch('http://localhost:3000/api/systemstatus', {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('threeCXAccessToken')}`,
+      Authorization: `Bearer ${accessToken}`,
     },
   });
 
@@ -26,6 +28,7 @@ export async function fetchSystemStatus() {
 
   return response.json();
 }
+
 
 
 export async function fetchExtensions() {
