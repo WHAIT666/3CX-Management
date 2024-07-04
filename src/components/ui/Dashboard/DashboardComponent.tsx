@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { fetchSystemStatus } from '../../../services/api'; // Adjust the import based on your file structure
+import { fetchSystemStatus } from '../../../services/api'; // Ajuste o import conforme a estrutura de seus arquivos
 import { FrameIcon } from 'lucide-react';
+import CentralFormComponent from '../CentralsForm/CentralFormComponent'; // Certifique-se de ajustar o caminho conforme necessário
 
-export default function Component() {
+export default function Dashboard() {
   const [systemStatus, setSystemStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showPopup, setShowPopup] = useState(true); // Adicione este estado
 
   useEffect(() => {
     async function getSystemStatus() {
@@ -22,6 +24,13 @@ export default function Component() {
     getSystemStatus();
   }, []);
 
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    // Aqui, você deve capturar os dados do formulário e fazer a requisição à API 3CX
+    // Após obter os tokens, defina showPopup para false
+    setShowPopup(false);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -32,6 +41,11 @@ export default function Component() {
 
   return (
     <div className="flex flex-col w-full min-h-screen">
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+          <CentralFormComponent onSubmit={handleFormSubmit} />
+        </div>
+      )}
       <div className="p-4 md:p-10">
         <div className="mb-4">
           <div className="text-lg font-semibold">System Information</div>
@@ -123,5 +137,3 @@ export default function Component() {
     </div>
   );
 }
-
-
