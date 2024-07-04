@@ -1,7 +1,9 @@
-// src/components/ui/Topbar/TopbarComponent.tsx
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { MessageCircleQuestionIcon } from 'lucide-react';
+import { LogOutIcon, MessageCircleQuestionIcon, SettingsIcon, UserIcon } from 'lucide-react';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuGroup, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const Topbar = () => {
   const location = useLocation();
@@ -29,12 +31,45 @@ const Topbar = () => {
       <div className="flex-1">
         <h1 className="font-semibold text-lg">{getTitle()}</h1>
       </div>
-      <div className="flex items-center gap-2">
-        <span>Help</span>
-        <MessageCircleQuestionIcon className="h-6 w-6" />
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <span>Help</span>
+          <MessageCircleQuestionIcon className="h-6 w-6" />
+        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" variant="ghost" className="h-8 w-8 rounded-full">
+              <Avatar>
+                <AvatarImage src="/placeholder-user.jpg" />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <UserIcon className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <SettingsIcon className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <LogOutIcon className="mr-2 h-4 w-4" />
+              <span>Log out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
 };
+
+
 
 export default Topbar;

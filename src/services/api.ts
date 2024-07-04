@@ -32,7 +32,7 @@ export async function fetchSystemStatus() {
 
 
 export async function fetchExtensions() {
-  const response = await fetch('http://172.31.0.139/xapi/v1/SystemStatus/Pbx.SystemExtensions()', {
+  const response = await fetch('http://localhost:3000/api/systemextensions', {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('threeCXAccessToken')}`, // Use threeCXAccessToken instead of token
     },
