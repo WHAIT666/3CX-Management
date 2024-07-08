@@ -8,7 +8,7 @@ export default function Dashboard() {
   const [systemStatus, setSystemStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showPopup, setShowPopup] = useState(true); // Adicione este estado
+  const [showPopup, setShowPopup] = useState(false); // Adicione este estado
 
   useEffect(() => {
     async function getSystemStatus() {

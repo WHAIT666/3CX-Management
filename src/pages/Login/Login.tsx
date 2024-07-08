@@ -38,7 +38,7 @@ async function loginUser(credentials) {
     },
     body: JSON.stringify({
       SecurityCode: "1001",
-      Password: "Whait12345!1",
+      Password: "Whait12345!",
       Username: "8220440@estg.ipp.pt"
     })
   });

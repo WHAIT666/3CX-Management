@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { LogOutIcon, MessageCircleQuestionIcon, SettingsIcon, UserIcon } from 'lucide-react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuGroup, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const Topbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const getTitle = () => {
     switch (location.pathname) {
@@ -24,6 +25,16 @@ const Topbar = () => {
       default:
         return '3CX Management';
     }
+  };
+
+  const handleLogout = () => {
+    // Clear user authentication tokens
+    localStorage.removeItem('accessToken');
+    // Add any other tokens that need to be cleared
+    localStorage.removeItem('otherTokenName'); // Replace with actual token name if necessary
+    // Optionally, make an API call to log out the user from the server
+    // Redirect to the login page
+    navigate('/login');
   };
 
   return (
@@ -59,7 +70,7 @@ const Topbar = () => {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOutIcon className="mr-2 h-4 w-4" />
               <span>Log out</span>
             </DropdownMenuItem>
@@ -69,7 +80,5 @@ const Topbar = () => {
     </header>
   );
 };
-
-
 
 export default Topbar;
