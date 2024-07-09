@@ -10,6 +10,7 @@ import Phones from './pages/Dashboard/Phones';
 import Groups from './pages/Dashboard/Groups';
 import ExtensionManagement from './pages/Dashboard/ExtensionManagement';
 import Register from './pages/Register/Register';
+import Profile from './pages/Dashboard/Profile'; // Import the Profile component
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const accessToken = localStorage.getItem('accessToken');
@@ -34,6 +35,7 @@ function AppRouter() {
         <Route path="/dashboard/Users" element={<PrivateRoute><Users /></PrivateRoute>} />
         <Route path="/dashboard/Phones" element={<PrivateRoute><Phones /></PrivateRoute>} />
         <Route path="/dashboard/Groups" element={<PrivateRoute><Groups /></PrivateRoute>} />
+        <Route path="/dashboard/profile" element={<PrivateRoute><Profile /></PrivateRoute>} /> {/* Add the profile route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
