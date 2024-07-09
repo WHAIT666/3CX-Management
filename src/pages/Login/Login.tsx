@@ -1,147 +1,75 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useTheme } from "@/components/ui/theme-provider";
-import loginImage from "../../assets/techbase.png";
+import { Button } from "@/components/ui/button";
+import loginImage from "../../assets/techbasepreto.png";
+import { login } from '../../services/api'; // Import the login function
 
-async function loginUser(credentials) {
-  const response = await fetch('http://localhost:3000/api/sessions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(credentials)
-  });
-
-  if (!response.ok) {
-    let errorMessage = 'Login failed';
-    if (response.status === 401) {
-      errorMessage = 'Incorrect email or password';
-    } else if (response.status === 400) {
-      errorMessage = 'Invalid credentials';
-    }
-    throw new Error(errorMessage);
-  }
-
-  const data = await response.json();
-  const { accessToken, refreshToken } = data;
-
-  // Fetch 3CX tokens
-  const threeCXResponse = await fetch('http://172.31.0.139/webclient/api/Login/GetAccessToken', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`
-    },
-    body: JSON.stringify({
-      SecurityCode: "1001",
-      Password: "Whait12345!",
-      Username: "8220440@estg.ipp.pt"
-    })
-  });
-
-  if (!threeCXResponse.ok) {
-    throw new Error('Failed to retrieve 3CX tokens');
-  }
-
-  const threeCXData = await threeCXResponse.json();
-  const { access_token: threeCXAccessToken, refresh_token: threeCXRefreshToken } = threeCXData.Token;
-
-  return {
-    accessToken,
-    refreshToken,
-    threeCXAccessToken,
-    threeCXRefreshToken
-  };
-}
-
-function Login() {
-  const navigate = useNavigate();
-  const { theme } = useTheme();
+export default function LoginComponent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
-    const threeCXAccessToken = localStorage.getItem('threeCXAccessToken');
-    const threeCXRefreshToken = localStorage.getItem('threeCXRefreshToken');
-    if (accessToken && refreshToken && threeCXAccessToken && threeCXRefreshToken) {
-      navigate('/dashboard');
-    }
-  }, [navigate]);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
     try {
-      setError('');
-      const { accessToken, refreshToken, threeCXAccessToken, threeCXRefreshToken } = await loginUser({ email, password });
+      const { accessToken, refreshToken } = await login(email, password);
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
-      localStorage.setItem('threeCXAccessToken', threeCXAccessToken);
-      localStorage.setItem('threeCXRefreshToken', threeCXRefreshToken);
-      navigate('/dashboard');
-    } catch (error) {
-      setError(error.message);
-      setPassword(''); // Clear password field on error
+      navigate('/dashboard'); // Redirect to the dashboard after login
+    } catch (err) {
+      setError('Login failed. Please check your credentials and try again.');
     }
   };
 
   return (
-    <div className={`flex items-center justify-center h-screen bg-gray-100 ${theme === 'dark' ? 'dark:bg-gray-900' : 'bg-gray-100'}`}>
-      <Card className="w-full max-w-md p-6 bg-white shadow-lg dark:bg-gray-950">
-        <CardHeader className="text-center relative">
-          <img 
-            src={loginImage} 
-            alt="Login" 
-            className="mx-auto mb-4" 
-            style={{ width: "150px", height: "150px" }}
-          />
-          <CardTitle className="text-2xl font-bold">Login</CardTitle>
-          <CardDescription className={`text-gray-500 ${theme === 'dark' ? 'dark:text-gray-400' : 'text-gray-500'}`}>
-            Enter your credentials to access your account.
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleLogin}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
+    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+      <div className="flex items-center justify-center py-12">
+        <div className="mx-auto grid w-[350px] gap-6">
+          <div className="grid gap-2 text-center">
+            <h1 className="text-3xl font-bold">Login</h1>
+            <p className="text-balance text-muted-foreground">Enter your email below to login to your account</p>
+          </div>
+          <form onSubmit={handleSubmit} className="grid gap-4">
+            {error && <div className="text-red-500">{error}</div>}
+            <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" placeholder="Email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Input id="email" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" placeholder="Password" required type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            </div>
-            {error && (
-              <div className="text-red-500 text-center">
-                {error === 'Incorrect email or password' ? (
-                  <>Incorrect email or password. Please try again.</>
-                ) : error === 'Invalid credentials' ? (
-                  <>Invalid credentials. Please check your email and password.</>
-                ) : (
-                  <>An error occurred during login. Please try again later.</>
-                )}
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
+                <Link to="/forgot-password" className="ml-auto inline-block text-sm underline">
+                  Forgot your password?
+                </Link>
               </div>
-            )}
-            <div className="text-center text-sm">
-              <a href="/forgot-password" className={`${theme === 'dark' ? 'text-white' : 'text-black'} hover:underline`}>
-                Forgot Password?
-              </a>
+              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
-          </CardContent>
-          <CardFooter className="text-center">
-            <Button className="w-full" type="submit">
+            <Button type="submit" className="w-full">
               Login
             </Button>
-          </CardFooter>
-        </form>
-      </Card>
+          </form>
+          <div className="mt-4 text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link to="/register" className="underline">
+              Sign up
+            </Link>
+          </div>
+        </div>
+      </div>
+      <div className="hidden bg-muted lg:block">
+        <img
+          src={loginImage}
+          alt="Image"
+          width="1920"
+          height="1080"
+          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
+      </div>
     </div>
   );
 }
-
-export default Login;

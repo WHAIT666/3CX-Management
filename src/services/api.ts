@@ -1,52 +1,51 @@
-// api.ts
-export async function fetchUser() {
-  const response = await fetch('http://localhost:3000/api/users/me', {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`, // Use accessToken instead of token
-    },
-  });
+// src/services/api.ts
+import axios from 'axios';
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch user');
-  }
+const API_URL = 'http://localhost:3000/api'; // Base URL for the API
 
-  return response.json();
-}
+const axiosInstance = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-export async function fetchSystemStatus() {
+// Add a request interceptor to attach the token
+axiosInstance.interceptors.request.use((config) => {
   const accessToken = localStorage.getItem('accessToken');
-
-  const response = await fetch('http://localhost:3000/api/systemstatus', {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch system status');
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
   }
+  return config;
+}, error => {
+  return Promise.reject(error);
+});
 
-  return response.json();
-}
+// Function to handle login
+export const login = async (email: string, password: string) => {
+  const response = await axiosInstance.post('/auth/login', { email, password });
+  return response.data;
+};
 
+// Function to fetch user data
+export const fetchUser = async () => {
+  const response = await axiosInstance.get('/users/me');
+  return response.data;
+};
 
+// Function to fetch system status
+export const fetchSystemStatus = async () => {
+  const response = await axiosInstance.get('/systemstatus');
+  return response.data;
+};
 
-export async function fetchExtensions() {
-  const response = await fetch('http://localhost:3000/api/systemextensions', {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('threeCXAccessToken')}`, // Use threeCXAccessToken instead of token
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch extensions');
-  }
-
-  const data = await response.json();
-  return data.value.map(extension => ({
+// Function to fetch extensions
+export const fetchExtensions = async () => {
+  const response = await axiosInstance.get('/systemextensions');
+  return response.data.value.map((extension: any) => ({
     id: extension.Number,
     name: extension.Name,
     status: extension.IsRegistered ? 'Registered' : 'Unregistered',
     type: extension.Type,
   }));
-}
+};
