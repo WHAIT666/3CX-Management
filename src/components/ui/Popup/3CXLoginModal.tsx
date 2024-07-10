@@ -8,7 +8,7 @@ import { login3CX } from '../../../services/api'; // Ensure the import path is c
 
 export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
   const [fqdn, setFqdn] = useState("");
-  const [username, setUsername] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -23,7 +23,7 @@ export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
     const sanitizedFqdn = sanitizeFQDN(fqdn);
 
     try {
-      const response = await login3CX(sanitizedFqdn, username, password);
+      const response = await login3CX(sanitizedFqdn, identifier, password);
       console.log('3CX login successful:', response);
       // Store the tokens in localStorage or handle as needed
       localStorage.setItem('3cxAccessToken', response.Token.access_token);
@@ -32,7 +32,6 @@ export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
     } catch (error) {
       console.error('3CX login failed:', error);
       setError('3CX login failed. Please check your credentials and try again.');
-      // Handle error (e.g., show error message to the user)
     }
   };
 
@@ -58,16 +57,16 @@ export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
             />
           </div>
           <div className="grid items-center grid-cols-4 gap-4">
-            <Label htmlFor="username" className="text-right">
+            <Label htmlFor="identifier" className="text-right">
               Extension/Username
             </Label>
             <Input
-              id="username"
+              id="identifier"
               type="text"
               placeholder="1234 or email@example.com"
               className="col-span-3"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               required
             />
           </div>
