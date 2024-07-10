@@ -1,8 +1,7 @@
 // src/services/api.ts
 import axios from 'axios';
 
-// Base URL for your own API
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:3000/api'; // Base URL for the API
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
@@ -28,6 +27,20 @@ export const login = async (email: string, password: string) => {
   return response.data;
 };
 
+// Function to handle 3CX login
+export const login3CX = async (fqdn: string, username: string, password: string) => {
+  const response = await axios.post(`https://${fqdn}/webclient/api/Login/GetAccessToken`, {
+    SecurityCode: username,
+    Password: password,
+    Username: username,
+  }, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return response.data;
+};
+
 // Function to fetch user data
 export const fetchUser = async () => {
   const response = await axiosInstance.get('/users/me');
@@ -49,23 +62,4 @@ export const fetchExtensions = async () => {
     status: extension.IsRegistered ? 'Registered' : 'Unregistered',
     type: extension.Type,
   }));
-};
-
-// Function to handle 3CX login
-export const login3CX = async (fqdn: string, username: string, password: string) => {
-  const THREE_CX_API_URL = `https://${fqdn}/webclient/api`;
-  const response = await axios.post(`${THREE_CX_API_URL}/Login/GetAccessToken`, {
-    SecurityCode: username,
-    Password: password,
-    Username: username,
-  }, {
-    headers: {
-      'Content-Type': 'application/json',
-      // Add any other necessary headers here
-    },
-    httpsAgent: new (require('https').Agent)({
-      rejectUnauthorized: false,
-    }),
-  });
-  return response.data.Token;
 };

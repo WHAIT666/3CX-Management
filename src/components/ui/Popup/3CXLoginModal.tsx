@@ -10,18 +10,27 @@ export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
   const [fqdn, setFqdn] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(""); // Reset any previous errors
+
+    let formattedFqdn = fqdn;
+    if (formattedFqdn.startsWith('https://')) {
+      formattedFqdn = formattedFqdn.slice(8);
+    }
+
     try {
-      const response = await login3CX(fqdn, username, password);
+      const response = await login3CX(formattedFqdn, username, password);
       console.log('3CX login successful:', response);
       // Store the tokens in localStorage or handle as needed
-      localStorage.setItem('3cxAccessToken', response.access_token);
-      localStorage.setItem('3cxRefreshToken', response.refresh_token);
+      localStorage.setItem('3cxAccessToken', response.Token.access_token);
+      localStorage.setItem('3cxRefreshToken', response.Token.refresh_token);
       onRequestClose(); // Close the modal on success
     } catch (error) {
       console.error('3CX login failed:', error);
+      setError('3CX login failed. Please check your credentials and try again.');
       // Handle error (e.g., show error message to the user)
     }
   };
@@ -80,6 +89,7 @@ export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
               </Button>
             </div>
           </div>
+          {error && <div className="col-span-4 text-red-500 text-center">{error}</div>}
           <DialogFooter>
             <Button type="submit">Save</Button>
           </DialogFooter>
