@@ -30,17 +30,11 @@ export const login = async (email: string, password: string) => {
 // Function to handle 3CX login
 export const login3CX = async (fqdn: string, identifier: string, password: string) => {
   const isEmail = identifier.includes('@');
-  const requestData = {
-    Password: password,
-  };
+  const payload = isEmail 
+    ? { Password: password, SecurityCode: "", Username: identifier } 
+    : { Password: password, SecurityCode: identifier, Username: "" };
 
-  if (isEmail) {
-    requestData['Username'] = identifier;
-  } else {
-    requestData['SecurityCode'] = identifier;
-  }
-
-  const response = await axios.post(`https://${fqdn}/webclient/api/Login/GetAccessToken`, requestData, {
+  const response = await axios.post(`https://${fqdn}/webclient/api/Login/GetAccessToken`, payload, {
     headers: {
       'Content-Type': 'application/json',
     },

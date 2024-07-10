@@ -43,53 +43,40 @@ export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
           <DialogDescription>Enter the details for your 3CX account.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-4 py-4">
-          <div className="grid items-center grid-cols-4 gap-4">
-            <Label htmlFor="fqdn" className="text-right">
-              FQDN/URL
-            </Label>
+          <div className="grid gap-2">
+            <Label htmlFor="fqdn">FQDN / URL</Label>
             <Input
               id="fqdn"
+              type="text"
               placeholder="example.3cx.com"
-              className="col-span-3"
               value={fqdn}
               onChange={(e) => setFqdn(e.target.value)}
               required
             />
           </div>
-          <div className="grid items-center grid-cols-4 gap-4">
-            <Label htmlFor="identifier" className="text-right">
-              Extension/Username
-            </Label>
+          <div className="grid gap-2">
+            <Label htmlFor="identifier">Security Code or Username</Label>
             <Input
               id="identifier"
               type="text"
-              placeholder="1234 or email@example.com"
-              className="col-span-3"
+              placeholder="e.g. 1001 or email@example.com"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               required
             />
           </div>
-          <div className="grid items-center grid-cols-4 gap-4">
-            <Label htmlFor="password" className="text-right">
-              Password
-            </Label>
-            <div className="col-span-3 relative">
-              <Input
-                id="password"
-                type="password"
-                placeholder="********"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <Button variant="ghost" size="icon" className="absolute bottom-1 right-1 h-7 w-7">
-                <EyeIcon className="h-4 w-4" />
-                <span className="sr-only">Toggle password visibility</span>
-              </Button>
-            </div>
+          <div className="grid gap-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
-          {error && <div className="col-span-4 text-red-500 text-center">{error}</div>}
+          {error && <div className="text-red-500 text-center">{error}</div>}
           <DialogFooter>
             <Button type="submit">Save</Button>
           </DialogFooter>
