@@ -12,17 +12,18 @@ export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const sanitizeFQDN = (fqdn) => {
+    return fqdn.replace(/(^\w+:|^)\/\//, '');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); // Reset any previous errors
 
-    let formattedFqdn = fqdn;
-    if (formattedFqdn.startsWith('https://')) {
-      formattedFqdn = formattedFqdn.slice(8);
-    }
+    const sanitizedFqdn = sanitizeFQDN(fqdn);
 
     try {
-      const response = await login3CX(formattedFqdn, username, password);
+      const response = await login3CX(sanitizedFqdn, username, password);
       console.log('3CX login successful:', response);
       // Store the tokens in localStorage or handle as needed
       localStorage.setItem('3cxAccessToken', response.Token.access_token);
