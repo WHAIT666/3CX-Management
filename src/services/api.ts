@@ -1,4 +1,3 @@
-// src/services/api.ts
 import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api'; // Base URL for the API
@@ -27,20 +26,17 @@ export const login = async (email: string, password: string) => {
   return response.data;
 };
 
-
 // Function to handle 3CX login
 export const login3CX = async (fqdn: string, identifier: string, password: string) => {
-  const isSecurityCode = /^\d+$/.test(identifier);
   const payload = {
     FQDN: fqdn,
-    SecurityCode: isSecurityCode ? identifier : "",
-    Username: isSecurityCode ? "" : identifier,
+    SecurityCode: "",
+    Username: identifier,
     Password: password
   };
   const response = await axios.post('https://172.31.0.139/webclient/api/Login/GetAccessToken', payload);
   return response.data;
 };
-
 
 // Function to fetch user data
 export const fetchUser = async () => {

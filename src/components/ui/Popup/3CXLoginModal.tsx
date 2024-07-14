@@ -18,7 +18,15 @@ export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
     try {
       const response = await login3CX(fqdn, identifier, password);
       console.log('Response:', response);
-      onRequestClose(); // Close the modal on submit
+
+      if (response.Status === 'AuthSuccess') {
+        // Store 3CX tokens in localStorage
+        localStorage.setItem('3cxAccessToken', response.Token.access_token);
+        localStorage.setItem('3cxRefreshToken', response.Token.refresh_token);
+        onRequestClose(); // Close the modal on submit
+      } else {
+        setError('Login failed. Please check your credentials.');
+      }
     } catch (error) {
       console.error('Error during login:', error);
       setError('Login failed. Please check your credentials.');
