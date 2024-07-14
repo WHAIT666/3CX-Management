@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { EyeIcon } from "lucide-react";
 import { login3CX } from '../../../services/api'; // Ensure the import path is correct
 
 export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
@@ -13,7 +12,8 @@ export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
   const [error, setError] = useState("");
 
   const sanitizeFQDN = (fqdn) => {
-    return fqdn.replace(/(^\w+:|^)\/\//, '');
+    // Remove protocol and trailing slash if present
+    return fqdn.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, '');
   };
 
   const handleSubmit = async (e) => {
