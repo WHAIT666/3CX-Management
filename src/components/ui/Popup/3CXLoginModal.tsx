@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { login3CX } from '../../../services/api'; // Ensure the import path is correct
+import { login3CX } from '../../../services/api'; // Ensure correct path to api
 
 export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
   const [fqdn, setFqdn] = useState("");
@@ -11,27 +11,17 @@ export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const sanitizeFQDN = (fqdn) => {
-    // Remove protocol and trailing slash if present
-    return fqdn.replace(/(^\w+:|^)\/\//, '').replace(/\/$/, '');
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); // Reset any previous errors
 
-    const sanitizedFqdn = sanitizeFQDN(fqdn);
-
     try {
-      const response = await login3CX(sanitizedFqdn, identifier, password);
-      console.log('3CX login successful:', response);
-      // Store the tokens in localStorage or handle as needed
-      localStorage.setItem('3cxAccessToken', response.Token.access_token);
-      localStorage.setItem('3cxRefreshToken', response.Token.refresh_token);
-      onRequestClose(); // Close the modal on success
+      const response = await login3CX(fqdn, identifier, password);
+      console.log('Response:', response);
+      onRequestClose(); // Close the modal on submit
     } catch (error) {
-      console.error('3CX login failed:', error);
-      setError('3CX login failed. Please check your credentials and try again.');
+      console.error('Error during login:', error);
+      setError('Login failed. Please check your credentials.');
     }
   };
 

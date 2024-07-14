@@ -27,21 +27,20 @@ export const login = async (email: string, password: string) => {
   return response.data;
 };
 
+
 // Function to handle 3CX login
 export const login3CX = async (fqdn: string, identifier: string, password: string) => {
-  const isEmail = identifier.includes('@');
-  const payload = isEmail 
-    ? { Password: password, SecurityCode: "", Username: identifier } 
-    : { Password: password, SecurityCode: identifier, Username: "" };
-
-  const response = await axios.post(`https://${fqdn}/webclient/api/Login/GetAccessToken`, payload, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
+  const isSecurityCode = /^\d+$/.test(identifier);
+  const payload = {
+    FQDN: fqdn,
+    SecurityCode: isSecurityCode ? identifier : "",
+    Username: isSecurityCode ? "" : identifier,
+    Password: password
+  };
+  const response = await axios.post('https://172.31.0.139/webclient/api/Login/GetAccessToken', payload);
   return response.data;
 };
+
 
 // Function to fetch user data
 export const fetchUser = async () => {
