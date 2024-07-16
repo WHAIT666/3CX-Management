@@ -1,71 +1,31 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState } from "react"
 import { Input } from "@/components/ui/input"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuCheckboxItem, DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import { fetchExtensions } from "../../../services/api"
-import { FilterIcon, EllipsisVerticalIcon, FilePenIcon, TrashIcon } from "lucide-react"
+import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationNext } from "@/components/ui/pagination"
+import { FilterIcon, CheckIcon, EllipsisVerticalIcon, TrashIcon, FilePenIcon } from "lucide-react"
 
 export default function Component() {
+  const [data, setData] = useState([
+    { id: 1, name: "John Doe", status: "Active", type: "Customer" },
+    { id: 2, name: "Jane Smith", status: "Inactive", type: "Vendor" },
+    { id: 3, name: "Bob Johnson", status: "Active", type: "Customer" },
+    { id: 4, name: "Alice Williams", status: "Inactive", type: "Customer" },
+    { id: 5, name: "Tom Davis", status: "Active", type: "Vendor" },
+    { id: 6, name: "Sara Lee", status: "Inactive", type: "Customer" },
+    { id: 7, name: "Mike Brown", status: "Active", type: "Customer" },
+    { id: 8, name: "Emily Wilson", status: "Inactive", type: "Vendor" },
+    { id: 9, name: "David Taylor", status: "Active", type: "Customer" },
+    { id: 10, name: "Sophia Anderson", status: "Inactive", type: "Customer" },
+  ])
   const [search, setSearch] = useState("")
-  const [sort, setSort] = useState({ key: "name", order: "asc" })
-  const [filters, setFilters] = useState({
-    status: [],
-    location: [],
-    version: [],
-  })
-  const [selectedRows, setSelectedRows] = useState([])
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [editingCentral, setEditingCentral] = useState(null)
-  const [centrals, setCentrals] = useState([])
-
-  useEffect(() => {
-    async function loadExtensions() {
-      try {
-        const data = await fetchExtensions()
-        setCentrals(data)
-      } catch (error) {
-        console.error('Failed to fetch extensions:', error)
-      }
-    }
-    loadExtensions()
-  }, [])
-
-  const filteredCentrals = useMemo(() => {
-    return centrals
-      .filter((central) => {
-        const searchValue = search.toLowerCase()
-        return (
-          central.name.toLowerCase().includes(searchValue) ||
-          central.status.toLowerCase().includes(searchValue) ||
-          central.type.toLowerCase().includes(searchValue) ||
-          central.id.toLowerCase().includes(searchValue)
-        )
-      })
-      .filter((central) => {
-        if (filters.status.length > 0 && !filters.status.includes(central.status)) {
-          return false
-        }
-        if (filters.location.length > 0 && !filters.location.includes(central.location)) {
-          return false
-        }
-        if (filters.version.length > 0 && !filters.version.includes(central.version)) {
-          return false
-        }
-        return true
-      })
-      .sort((a, b) => {
-        if (sort.order === "asc") {
-          return a[sort.key] > b[sort.key] ? 1 : -1
-        } else {
-          return a[sort.key] < b[sort.key] ? 1 : -1
-        }
-      })
-  }, [search, sort, filters, centrals])
-
+  const [sort, setSort] = useState({ key: null, order: null })
+  const [currentPage, setCurrentPage] = useState(1)
+  const [entriesPerPage, setEntriesPerPage] = useState(5)
+  const [filter, setFilter] = useState(null)
+  const [selectedEntries, setSelectedEntries] = useState([])
   const handleSearch = (e) => setSearch(e.target.value)
   const handleSort = (key) => {
     if (sort.key === key) {
@@ -74,169 +34,169 @@ export default function Component() {
       setSort({ key, order: "asc" })
     }
   }
-  const handleFilterChange = (type, value) => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [type]: prevFilters[type].includes(value)
-        ? prevFilters[type].filter((item) => item !== value)
-        : [...prevFilters[type], value],
-    }))
+  const handleDelete = (id) => {
+    setData(data.filter((entry) => entry.id !== id))
+    setSelectedEntries(selectedEntries.filter((entryId) => entryId !== id))
+  }
+  const handleFilter = (status) => {
+    setFilter(status)
   }
   const handleSelectAll = () => {
-    if (selectedRows.length === filteredCentrals.length) {
-      setSelectedRows([])
+    if (selectedEntries.length === filteredData.length) {
+      setSelectedEntries([])
     } else {
-      setSelectedRows(filteredCentrals.map((central) => central.id))
+      setSelectedEntries(filteredData.map((entry) => entry.id))
     }
   }
-  const handleRowSelect = (id) => {
-    if (selectedRows.includes(id)) {
-      setSelectedRows(selectedRows.filter((rowId) => rowId !== id))
+  const handleSelectEntry = (id) => {
+    if (selectedEntries.includes(id)) {
+      setSelectedEntries(selectedEntries.filter((entryId) => entryId !== id))
     } else {
-      setSelectedRows([...selectedRows, id])
+      setSelectedEntries([...selectedEntries, id])
     }
   }
-  const handleAddCentral = () => {
-    setShowAddModal(true)
-  }
-  const handleEditCentral = (central) => {
-    setEditingCentral(central)
-    setShowEditModal(true)
-  }
-  const handleDeleteCentral = (id) => {
-    console.log(`Deleting 3CX Central with ID: ${id}`)
-  }
-  const itemsPerPage = 10
-  const totalCentrals = filteredCentrals.length
-  const paginatedCentrals = filteredCentrals
-
+  const filteredData = data.filter(
+    (entry) =>
+      (filter === null ||
+        entry.status.toLowerCase() === filter.toLowerCase() ||
+        entry.type.toLowerCase() === filter.toLowerCase()) &&
+      (entry.name.toLowerCase().includes(search.toLowerCase()) ||
+        entry.status.toLowerCase().includes(search.toLowerCase()) ||
+        entry.type.toLowerCase().includes(search.toLowerCase())),
+  )
+  const sortedData = sort.key
+    ? filteredData.sort((a, b) => {
+        if (a[sort.key] < b[sort.key]) return sort.order === "asc" ? -1 : 1
+        if (a[sort.key] > b[sort.key]) return sort.order === "asc" ? 1 : -1
+        return 0
+      })
+    : filteredData
+  const indexOfLastEntry = currentPage * entriesPerPage
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage
+  const currentEntries = sortedData.slice(indexOfFirstEntry, indexOfLastEntry)
+  const totalPages = Math.ceil(sortedData.length / entriesPerPage)
   return (
-    <div className="flex flex-col gap-4 w-full">
-      <div className="flex items-center gap-4">
-        <Input
-          placeholder="Search 3CX Centrals..."
-          className="bg-white dark:bg-gray-950"
-          value={search}
-          onChange={handleSearch}
-        />
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2">
+        <Input type="text" placeholder="Search..." value={search} onChange={handleSearch} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="shrink-0">
-              <FilterIcon className="w-4 h-4 mr-2" />
-              Filters
+            <Button variant="outline">
+              <FilterIcon className="h-4 w-4 mr-2" /> Filters
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-[200px]">
-            <DropdownMenuLabel>Filters</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem
-              checked={filters.status.includes("Registered")}
-              onCheckedChange={() => handleFilterChange("status", "Registered")}
-            >
-              Registered
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={filters.status.includes("Unregistered")}
-              onCheckedChange={() => handleFilterChange("status", "Unregistered")}
-            >
-              Unregistered
-            </DropdownMenuCheckboxItem>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => handleFilter(null)}>
+              All {filter === null && <CheckIcon className="h-4 w-4 ml-2" />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleFilter("active")}>
+              Active {filter === "active" && <CheckIcon className="h-4 w-4 ml-2" />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleFilter("inactive")}>
+              Inactive {filter === "inactive" && <CheckIcon className="h-4 w-4 ml-2" />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleFilter("customer")}>
+              Customer {filter === "customer" && <CheckIcon className="h-4 w-4 ml-2" />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleFilter("vendor")}>
+              Vendor {filter === "vendor" && <CheckIcon className="h-4 w-4 ml-2" />}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button onClick={handleAddCentral}>Add 3CX Central</Button>
+        <Button onClick={() => setData([...data, { id: data.length + 1 }])}>Add Entry</Button>
       </div>
-      <div className="overflow-auto border rounded-lg">
+      <div className="overflow-x-auto rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[32px]">
-                <Checkbox checked={selectedRows.length === filteredCentrals.length} onCheckedChange={handleSelectAll} />
+              <TableHead>
+                <Checkbox checked={selectedEntries.length === filteredData.length} onCheckedChange={handleSelectAll} />
+              </TableHead>
+              <TableHead className="cursor-pointer" onClick={() => handleSort("id")}>
+                ID
+                {sort.key === "id" && <span className="ml-1">{sort.order === "asc" ? "\u25B2" : "\u25BC"}</span>}
               </TableHead>
               <TableHead className="cursor-pointer" onClick={() => handleSort("name")}>
                 Name
-                {sort.key === "name" && <span className="ml-1">{sort.order === "asc" ? "\u2191" : "\u2193"}</span>}
+                {sort.key === "name" && <span className="ml-1">{sort.order === "asc" ? "\u25B2" : "\u25BC"}</span>}
               </TableHead>
               <TableHead className="cursor-pointer" onClick={() => handleSort("status")}>
                 Status
-                {sort.key === "status" && <span className="ml-1">{sort.order === "asc" ? "\u2191" : "\u2193"}</span>}
+                {sort.key === "status" && <span className="ml-1">{sort.order === "asc" ? "\u25B2" : "\u25BC"}</span>}
               </TableHead>
               <TableHead className="cursor-pointer" onClick={() => handleSort("type")}>
                 Type
-                {sort.key === "type" && <span className="ml-1">{sort.order === "asc" ? "\u2191" : "\u2193"}</span>}
+                {sort.key === "type" && <span className="ml-1">{sort.order === "asc" ? "\u25B2" : "\u25BC"}</span>}
               </TableHead>
-              <TableHead className="w-[120px] text-center">Actions</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedCentrals.map((central) => (
-              <TableRow key={central.id}>
+            {currentEntries.map((entry) => (
+              <TableRow key={entry.id}>
                 <TableCell>
                   <Checkbox
-                    checked={selectedRows.includes(central.id)}
-                    onCheckedChange={() => handleRowSelect(central.id)}
+                    checked={selectedEntries.includes(entry.id)}
+                    onCheckedChange={() => handleSelectEntry(entry.id)}
                   />
                 </TableCell>
-                <TableCell className="font-medium">{central.name} ({central.id})</TableCell>
-                <TableCell className={central.status === "Registered" ? "text-green-500" : "text-red-500"}>
-                  {central.status}
+                <TableCell>{entry.id}</TableCell>
+                <TableCell>{entry.name}</TableCell>
+                <TableCell className={entry.status.toLowerCase() === "active" ? "text-green-500" : "text-red-500"}>
+                  {entry.status}
                 </TableCell>
-                <TableCell>{central.type}</TableCell>
-                <TableCell className="text-center">
-                  <div className="flex justify-center">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <EllipsisVerticalIcon className="w-4 h-4" />
-                          <span className="sr-only">Actions</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEditCentral(central)}>
-                          <FilePenIcon className="w-4 h-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDeleteCentral(central.id)}>
-                          <TrashIcon className="w-4 h-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                <TableCell>{entry.type}</TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm">
+                        <EllipsisVerticalIcon className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => handleDelete(entry.id)}>
+                        <TrashIcon className="h-4 w-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <FilePenIcon className="h-4 w-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">Showing {filteredCentrals.length} 3CX Centrals</div>
+      <div className="flex justify-end">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+              />
+            </PaginationItem>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink href="#" isActive={page === currentPage} onClick={() => setCurrentPage(page)}>
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(currentPage + 1)}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
-      <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add 3CX Central</DialogTitle>
-            <DialogDescription>Enter the details for the new 3CX Central.</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4" />
-          <DialogFooter>
-            <Button onClick={() => setShowAddModal(false)}>Cancel</Button>
-            <Button>Add 3CX Central</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit 3CX Central</DialogTitle>
-            <DialogDescription>Update the details for the selected 3CX Central.</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4" />
-          <DialogFooter>
-            <Button onClick={() => setShowEditModal(false)}>Cancel</Button>
-            <Button>Save</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
