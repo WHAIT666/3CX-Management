@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,14 @@ export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('3cxAccessToken');
+    if (!token) {
+      setShowModal(true);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,6 +31,7 @@ export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
         // Store 3CX tokens in localStorage
         localStorage.setItem('3cxAccessToken', response.Token.access_token);
         localStorage.setItem('3cxRefreshToken', response.Token.refresh_token);
+        setShowModal(false); // Close the modal on submit
         onRequestClose(); // Close the modal on submit
       } else {
         setError('Login failed. Please check your credentials.');
@@ -32,6 +41,8 @@ export const ThreeCXLoginModal = ({ isOpen, onRequestClose }) => {
       setError('Login failed. Please check your credentials.');
     }
   };
+
+  if (!showModal) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onRequestClose}>
