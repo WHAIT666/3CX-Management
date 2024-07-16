@@ -55,7 +55,7 @@ export const fetchSystemStatus = async () => {
   return response.data;
 };
 
-// Function to fetch extensions
+// Function to fetch 3cxextensions
 export const fetchExtensions = async () => {
   const accessToken = localStorage.getItem('3cxAccessToken');
   const response = await axiosInstance.get('/systemextensions', {
@@ -71,6 +71,45 @@ export const fetchExtensions = async () => {
   }));
 };
 
+export const fetchCentrals = async () => {
+  try {
+    const response = await axiosInstance.get('/centrals');
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch centrals:', error);
+    throw error;
+  }
+};
+
+export const createCentral = async (central) => {
+  try {
+    const response = await axiosInstance.post('/centrals', central);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to create central:', error);
+    throw error;
+  }
+};
+
+export const updateCentral = async (id, central) => {
+  try {
+    const response = await axiosInstance.put(`/centrals/${id}`, central);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to update central:', error);
+    throw error;
+  }
+};
+
+export const deleteCentral = async (id) => {
+  try {
+    const response = await axiosInstance.delete(`/centrals/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to delete central:', error);
+    throw error;
+  }
+};
 
 
 export const requestPasswordReset = async (email: string) => {

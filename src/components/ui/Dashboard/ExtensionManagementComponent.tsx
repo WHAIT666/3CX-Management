@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
@@ -6,26 +6,29 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationNext } from "@/components/ui/pagination"
 import { FilterIcon, CheckIcon, EllipsisVerticalIcon, TrashIcon, FilePenIcon } from "lucide-react"
+import { fetchCentrals, createCentral, updateCentral, deleteCentral } from "@/services/api" // Adjust import path as needed
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 
 export default function Component() {
-  const [data, setData] = useState([
-    { id: 1, name: "John Doe", status: "Active", type: "Customer" },
-    { id: 2, name: "Jane Smith", status: "Inactive", type: "Vendor" },
-    { id: 3, name: "Bob Johnson", status: "Active", type: "Customer" },
-    { id: 4, name: "Alice Williams", status: "Inactive", type: "Customer" },
-    { id: 5, name: "Tom Davis", status: "Active", type: "Vendor" },
-    { id: 6, name: "Sara Lee", status: "Inactive", type: "Customer" },
-    { id: 7, name: "Mike Brown", status: "Active", type: "Customer" },
-    { id: 8, name: "Emily Wilson", status: "Inactive", type: "Vendor" },
-    { id: 9, name: "David Taylor", status: "Active", type: "Customer" },
-    { id: 10, name: "Sophia Anderson", status: "Inactive", type: "Customer" },
-  ])
+  const [data, setData] = useState([])
   const [search, setSearch] = useState("")
   const [sort, setSort] = useState({ key: null, order: null })
   const [currentPage, setCurrentPage] = useState(1)
   const [entriesPerPage, setEntriesPerPage] = useState(5)
   const [filter, setFilter] = useState(null)
   const [selectedEntries, setSelectedEntries] = useState([])
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [currentCentral, setCurrentCentral] = useState(null)
+
+  useEffect(() => {
+    async function loadData() {
+      const centrals = await fetchCentrals()
+      setData(centrals)
+    }
+    loadData()
+  }, [])
+
   const handleSearch = (e) => setSearch(e.target.value)
   const handleSort = (key) => {
     if (sort.key === key) {
@@ -34,8 +37,9 @@ export default function Component() {
       setSort({ key, order: "asc" })
     }
   }
-  const handleDelete = (id) => {
-    setData(data.filter((entry) => entry.id !== id))
+  const handleDelete = async (id) => {
+    await deleteCentral(id)
+    setData(data.filter((entry) => entry._id !== id))
     setSelectedEntries(selectedEntries.filter((entryId) => entryId !== id))
   }
   const handleFilter = (status) => {
@@ -45,7 +49,7 @@ export default function Component() {
     if (selectedEntries.length === filteredData.length) {
       setSelectedEntries([])
     } else {
-      setSelectedEntries(filteredData.map((entry) => entry.id))
+      setSelectedEntries(filteredData.map((entry) => entry._id))
     }
   }
   const handleSelectEntry = (id) => {
@@ -55,6 +59,17 @@ export default function Component() {
       setSelectedEntries([...selectedEntries, id])
     }
   }
+  const handleAddSubmit = async (central) => {
+    const newCentral = await createCentral(central)
+    setData([...data, newCentral])
+    setShowAddModal(false)
+  }
+  const handleEditSubmit = async (updatedCentral) => {
+    const central = await updateCentral(currentCentral._id, updatedCentral)
+    setData(data.map((item) => (item._id === central._id ? central : item)))
+    setShowEditModal(false)
+  }
+
   const filteredData = data.filter(
     (entry) =>
       (filter === null ||
@@ -75,6 +90,7 @@ export default function Component() {
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage
   const currentEntries = sortedData.slice(indexOfFirstEntry, indexOfLastEntry)
   const totalPages = Math.ceil(sortedData.length / entriesPerPage)
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
@@ -103,7 +119,7 @@ export default function Component() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button onClick={() => setData([...data, { id: data.length + 1 }])}>Add Entry</Button>
+        <Button onClick={() => setShowAddModal(true)}>Add Entry</Button>
       </div>
       <div className="overflow-x-auto rounded-md border">
         <Table>
@@ -133,14 +149,14 @@ export default function Component() {
           </TableHeader>
           <TableBody>
             {currentEntries.map((entry) => (
-              <TableRow key={entry.id}>
+              <TableRow key={entry._id}>
                 <TableCell>
                   <Checkbox
-                    checked={selectedEntries.includes(entry.id)}
-                    onCheckedChange={() => handleSelectEntry(entry.id)}
+                    checked={selectedEntries.includes(entry._id)}
+                    onCheckedChange={() => handleSelectEntry(entry._id)}
                   />
                 </TableCell>
-                <TableCell>{entry.id}</TableCell>
+                <TableCell>{entry._id}</TableCell>
                 <TableCell>{entry.name}</TableCell>
                 <TableCell className={entry.status.toLowerCase() === "active" ? "text-green-500" : "text-red-500"}>
                   {entry.status}
@@ -154,13 +170,16 @@ export default function Component() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleDelete(entry.id)}>
-                        <TrashIcon className="h-4 w-4 mr-2" />
-                        Delete
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => {
+                        setCurrentCentral(entry)
+                        setShowEditModal(true)
+                      }}>
                         <FilePenIcon className="h-4 w-4 mr-2" />
                         Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDelete(entry._id)}>
+                        <TrashIcon className="h-4 w-4 mr-2" />
+                        Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -170,7 +189,8 @@ export default function Component() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <div className="text-sm text-muted-foreground">Showing {data.length} centrals</div>
         <Pagination>
           <PaginationContent>
             <PaginationItem>
@@ -197,7 +217,78 @@ export default function Component() {
           </PaginationContent>
         </Pagination>
       </div>
+
+      <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Central</DialogTitle>
+            <DialogDescription>Enter the details for the new central.</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={(e) => {
+            e.preventDefault()
+            handleAddSubmit({
+              name: e.target.name.value,
+              ipAddress: e.target.ipAddress.value,
+              status: e.target.status.value
+            })
+          }}>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <label htmlFor="name">Name</label>
+                <Input id="name" name="name" required />
+              </div>
+              <div className="grid gap-2">
+                <label htmlFor="ipAddress">IP Address</label>
+                <Input id="ipAddress" name="ipAddress" required />
+              </div>
+              <div className="grid gap-2">
+                <label htmlFor="status">Status</label>
+                <Input id="status" name="status" required />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>Cancel</Button>
+              <Button type="submit">Add Central</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Central</DialogTitle>
+            <DialogDescription>Update the details for the central.</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={(e) => {
+            e.preventDefault()
+            handleEditSubmit({
+              name: e.target.name.value,
+              ipAddress: e.target.ipAddress.value,
+              status: e.target.status.value
+            })
+          }}>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <label htmlFor="name">Name</label>
+                <Input id="name" name="name" defaultValue={currentCentral?.name} required />
+              </div>
+              <div className="grid gap-2">
+                <label htmlFor="ipAddress">IP Address</label>
+                <Input id="ipAddress" name="ipAddress" defaultValue={currentCentral?.ipAddress} required />
+              </div>
+              <div className="grid gap-2">
+                <label htmlFor="status">Status</label>
+                <Input id="status" name="status" defaultValue={currentCentral?.status} required />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowEditModal(false)}>Cancel</Button>
+              <Button type="submit">Save Changes</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
-
