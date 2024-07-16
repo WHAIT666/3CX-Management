@@ -1,43 +1,50 @@
-import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import React from "react";
+// src/pages/Login/ForgotPassword.tsx
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { requestPasswordReset } from '../../services/api'; // Ensure the path is correct
 
-// Import your image
-import forgotPasswordImage from "../../assets/techbase.png";
+const ForgotPassword = () => {
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-function ForgotPassword() {
-    return (
-        <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
-            <Card className="w-full max-w-md p-6 bg-white shadow-lg dark:bg-gray-950">
-                <CardHeader className="text-center relative">
-                    {/* Include your image */}
-                    <img 
-                        src={forgotPasswordImage} 
-                        alt="Forgot Password" 
-                        className="mx-auto mb-4" 
-                        style={{ width: "150px", height: "150px" }} // Adjust width and height as needed
-                    />
-                    <CardTitle className="text-2xl font-bold">Forgot Password</CardTitle>
-                    <CardDescription className="text-gray-500 dark:text-gray-400">
-                        Enter your email to reset your password.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="email">User or Email</Label>
-                        <Input id="email" placeholder="Your Email" required type="email" />
-                    </div>
-                </CardContent>
-                <CardFooter className="text-center">
-                    <Button className="w-full" type="submit">
-                        Reset Password
-                    </Button>
-                </CardFooter>
-            </Card>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    try {
+      await requestPasswordReset(email);
+      setSuccess('Password reset link has been sent to your email');
+    } catch (error) {
+      console.error('Error during requesting password reset:', error);
+      setError('Failed to send password reset link');
+    }
+  };
+
+  return (
+    <div>
+      <h1>Forgot Password</h1>
+      <form onSubmit={handleSubmit}>
+        <div className="grid gap-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
-    );
-}
+        {error && <div className="text-red-500 text-center">{error}</div>}
+        {success && <div className="text-green-500 text-center">{success}</div>}
+        <Button type="submit">Send Reset Link</Button>
+      </form>
+    </div>
+  );
+};
 
 export default ForgotPassword;

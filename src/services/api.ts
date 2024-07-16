@@ -70,3 +70,15 @@ export const fetchExtensions = async () => {
     type: extension.Type,
   }));
 };
+
+
+
+export const requestPasswordReset = async (email: string) => {
+  const response = await axiosInstance.post('/users/forgotpassword', { email });
+  return response.data;
+};
+
+export const resetPassword = async (id: string, code: string, password: string) => {
+  const response = await axiosInstance.post(`/users/resetpassword/${id}/${code}`, { password });
+  return response.data;
+};

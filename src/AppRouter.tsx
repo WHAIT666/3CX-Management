@@ -11,6 +11,7 @@ import Groups from './pages/Dashboard/Groups';
 import ExtensionManagement from './pages/Dashboard/ExtensionManagement';
 import Register from './pages/Register/Register';
 import Profile from './pages/Dashboard/Profile'; // Import the Profile component
+import ResetPassword from './pages/Login/ResetPassword';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const accessToken = localStorage.getItem('accessToken');
@@ -30,6 +31,7 @@ function AppRouter() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/dashboard/ExtensionManagement" element={<PrivateRoute><ExtensionManagement /></PrivateRoute>} />
         <Route path="/dashboard/Users" element={<PrivateRoute><Users /></PrivateRoute>} />
