@@ -46,13 +46,23 @@ export const fetchUser = async () => {
 
 // Function to fetch system status
 export const fetchSystemStatus = async () => {
-  const response = await axiosInstance.get('/systemstatus');
+  const accessToken = localStorage.getItem('3cxAccessToken');
+  const response = await axiosInstance.get('/systemstatus', {
+    headers: {
+      '3cxAccessToken': accessToken
+    }
+  });
   return response.data;
 };
 
 // Function to fetch extensions
 export const fetchExtensions = async () => {
-  const response = await axiosInstance.get('/systemextensions');
+  const accessToken = localStorage.getItem('3cxAccessToken');
+  const response = await axiosInstance.get('/systemextensions', {
+    headers: {
+      '3cxAccessToken': accessToken
+    }
+  });
   return response.data.value.map((extension: any) => ({
     id: extension.Number,
     name: extension.Name,
