@@ -1,11 +1,37 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
-import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
-import { UserPlusIcon, TrashIcon, UploadIcon, DownloadIcon, LockIcon, ComputerIcon, ChromeIcon, CopyIcon, RefreshCwIcon, CheckIcon, EllipsisVerticalIcon } from "lucide-react"
+// UsersComponent.tsx
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from '@/components/ui/table';
+import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from '@/components/ui/dropdown-menu';
+import { UserPlusIcon, TrashIcon, UploadIcon, DownloadIcon, LockIcon, ComputerIcon, ChromeIcon, CopyIcon, RefreshCwIcon, CheckIcon, EllipsisVerticalIcon } from 'lucide-react';
+import { fetchUsers, deleteUser } from '@/services/api'; // Adjust import path as needed
 
-export default function Component() {
+export default function UsersComponent() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    async function loadUsers() {
+      try {
+        const usersData = await fetchUsers();
+        setUsers(usersData);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    }
+    loadUsers();
+  }, []);
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      await deleteUser(userId);
+      setUsers(users.filter(user => user.Id !== userId));
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col p-6">
@@ -68,96 +94,39 @@ export default function Component() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>
-                <Checkbox />
-              </TableCell>
-              <TableCell className="font-medium">XAPI, Techbase (System Owner)</TableCell>
-              <TableCell>suporte@techbase.pt</TableCell>
-              <TableCell>1000</TableCell>
-              <TableCell>DEFAULT</TableCell>
-              <TableCell>teste</TableCell>
-              <TableCell>teste</TableCell>
-              <TableCell>
-                <CheckIcon className="text-green-500" />
-                <ChromeIcon className="text-blue-500" />
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button size="icon" variant="ghost">
-                    <EllipsisVerticalIcon className="w-4 h-4" />
-                      <span className="sr-only">Actions</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Edit User</DropdownMenuItem>
-                    <DropdownMenuItem>Remove User</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Checkbox />
-              </TableCell>
-              <TableCell className="font-medium">Santos, André (System Owner)</TableCell>
-              <TableCell>8220440@estg.ipp.pt</TableCell>
-              <TableCell>1001</TableCell>
-              <TableCell>DEFAULT</TableCell>
-              <TableCell>123</TableCell>
-              <TableCell>teste</TableCell>
-              <TableCell>
-                <CheckIcon className="text-green-500" />
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button size="icon" variant="ghost">
-                    <EllipsisVerticalIcon className="w-4 h-4" />
-                      <span className="sr-only">Actions</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Edit User</DropdownMenuItem>
-                    <DropdownMenuItem>Remove User</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Checkbox />
-              </TableCell>
-              <TableCell className="font-medium">teste, teste (User)</TableCell>
-              <TableCell>whatil0123@gmail.com</TableCell>
-              <TableCell>1002</TableCell>
-              <TableCell>DEFAULT</TableCell>
-              <TableCell>teste</TableCell>
-              <TableCell>teste</TableCell>
-              <TableCell>
-                <CheckIcon className="text-green-500" />
-                <ChromeIcon className="text-blue-500" />
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button size="icon" variant="ghost">
-                      <EllipsisVerticalIcon className="w-4 h-4" />
-                      <span className="sr-only">Actions</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Edit User</DropdownMenuItem>
-                    <DropdownMenuItem>Remove User</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
+            {users.map(user => (
+              <TableRow key={user.Id}>
+                <TableCell>
+                  <Checkbox />
+                </TableCell>
+                <TableCell className="font-medium">{user.DisplayName}</TableCell>
+                <TableCell>{user.EmailAddress}</TableCell>
+                <TableCell>{user.Number}</TableCell>
+                <TableCell>{user.Groups?.[0]?.Name || 'N/A'}</TableCell>
+                <TableCell>Placeholder</TableCell>
+                <TableCell>Placeholder</TableCell>
+                <TableCell>
+                  {user.Require2FA ? <CheckIcon className="text-green-500" /> : null}
+                </TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="icon" variant="ghost">
+                        <EllipsisVerticalIcon className="w-4 h-4" />
+                        <span className="sr-only">Actions</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem>Edit User</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDeleteUser(user.Id)}>Remove User</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>
     </div>
-  )
+  );
 }
-
