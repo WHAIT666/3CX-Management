@@ -20,10 +20,6 @@ export default function Component() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [currentCentral, setCurrentCentral] = useState(null)
-  const [centralNumber, setCentralNumber] = useState("")
-  const [ipAddress, setIpAddress] = useState("")
-  const [status, setStatus] = useState("Active")
-  const [ipError, setIpError] = useState("")
 
   useEffect(() => {
     async function loadData() {
@@ -46,6 +42,11 @@ export default function Component() {
     setData(data.filter((entry) => entry._id !== id))
     setSelectedEntries(selectedEntries.filter((entryId) => entryId !== id))
   }
+  const handleBulkDelete = async () => {
+    await Promise.all(selectedEntries.map(id => deleteCentral(id)))
+    setData(data.filter((entry) => !selectedEntries.includes(entry._id)))
+    setSelectedEntries([])
+  }
   const handleFilter = (status) => {
     setFilter(status)
   }
@@ -64,27 +65,14 @@ export default function Component() {
     }
   }
   const handleAddSubmit = async (central) => {
-    if (!validateIp(ipAddress)) {
-      setIpError("Invalid IP address format.")
-      return
-    }
     const newCentral = await createCentral(central)
     setData([...data, newCentral])
     setShowAddModal(false)
   }
   const handleEditSubmit = async (updatedCentral) => {
-    if (!validateIp(ipAddress)) {
-      setIpError("Invalid IP address format.")
-      return
-    }
     const central = await updateCentral(currentCentral._id, updatedCentral)
     setData(data.map((item) => (item._id === central._id ? central : item)))
     setShowEditModal(false)
-  }
-
-  const validateIp = (ip) => {
-    const ipPattern = /^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$/
-    return ipPattern.test(ip)
   }
 
   const filteredData = data.filter(
@@ -106,24 +94,6 @@ export default function Component() {
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage
   const currentEntries = sortedData.slice(indexOfFirstEntry, indexOfLastEntry)
   const totalPages = Math.ceil(sortedData.length / entriesPerPage)
-
-  const handleCentralNumberChange = (e) => {
-    const number = e.target.value
-    setCentralNumber(number)
-  }
-
-  const handleIpAddressChange = (e) => {
-    setIpAddress(e.target.value)
-    if (validateIp(e.target.value)) {
-      setIpError("")
-    } else {
-      setIpError("Invalid IP address format.")
-    }
-  }
-
-  const handleStatusChange = (e) => {
-    setStatus(e.target.value)
-  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -148,6 +118,11 @@ export default function Component() {
           </DropdownMenuContent>
         </DropdownMenu>
         <Button onClick={() => setShowAddModal(true)}>Add Entry</Button>
+        {selectedEntries.length > 0 && (
+          <Button onClick={handleBulkDelete} variant="destructive">
+            Delete Selected
+          </Button>
+        )}
       </div>
       <div className="overflow-x-auto rounded-md border">
         <Table>
@@ -156,9 +131,9 @@ export default function Component() {
               <TableHead>
                 <Checkbox checked={selectedEntries.length === filteredData.length} onCheckedChange={handleSelectAll} />
               </TableHead>
-              <TableHead className="cursor-pointer" onClick={() => handleSort("id")}>
+              <TableHead className="cursor-pointer" onClick={() => handleSort("_id")}>
                 ID
-                {sort.key === "id" && <span className="ml-1">{sort.order === "asc" ? "\u25B2" : "\u25BC"}</span>}
+                {sort.key === "_id" && <span className="ml-1">{sort.order === "asc" ? "\u25B2" : "\u25BC"}</span>}
               </TableHead>
               <TableHead className="cursor-pointer" onClick={() => handleSort("name")}>
                 Name
@@ -200,9 +175,6 @@ export default function Component() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => {
                         setCurrentCentral(entry)
-                        setCentralNumber(entry.name.replace("Central ", ""))
-                        setIpAddress(entry.ipAddress)
-                        setStatus(entry.status)
                         setShowEditModal(true)
                       }}>
                         <FilePenIcon className="h-4 w-4 mr-2" />
@@ -256,26 +228,25 @@ export default function Component() {
             <DialogDescription>Enter the details for the new central.</DialogDescription>
           </DialogHeader>
           <form onSubmit={(e) => {
-            e.preventDefault();
+            e.preventDefault()
             handleAddSubmit({
-              name: `Central ${centralNumber}`,
-              ipAddress,
-              status
-            });
+              name: `Central ${data.length + 1}`,
+              ipAddress: e.target.ipAddress.value,
+              status: e.target.status.value
+            })
           }}>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <label htmlFor="centralNumber">Central Number</label>
-                <Input id="centralNumber" name="centralNumber" value={centralNumber} onChange={handleCentralNumberChange} required />
+                <label htmlFor="name">Name</label>
+                <Input id="name" name="name" value={`Central ${data.length + 1}`} readOnly />
               </div>
               <div className="grid gap-2">
                 <label htmlFor="ipAddress">IP Address</label>
-                <Input id="ipAddress" name="ipAddress" value={ipAddress} onChange={handleIpAddressChange} required />
-                {ipError && <div className="text-red-500">{ipError}</div>}
+                <Input id="ipAddress" name="ipAddress" type="number" required />
               </div>
               <div className="grid gap-2">
                 <label htmlFor="status">Status</label>
-                <select id="status" name="status" value={status} onChange={handleStatusChange} required>
+                <select id="status" name="status" required>
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
                 </select>
@@ -296,26 +267,25 @@ export default function Component() {
             <DialogDescription>Update the details for the central.</DialogDescription>
           </DialogHeader>
           <form onSubmit={(e) => {
-            e.preventDefault();
+            e.preventDefault()
             handleEditSubmit({
-              name: `Central ${centralNumber}`,
-              ipAddress,
-              status
-            });
+              name: currentCentral.name,
+              ipAddress: e.target.ipAddress.value,
+              status: e.target.status.value
+            })
           }}>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <label htmlFor="centralNumber">Central Number</label>
-                <Input id="centralNumber" name="centralNumber" value={centralNumber} onChange={handleCentralNumberChange} required />
+                <label htmlFor="name">Name</label>
+                <Input id="name" name="name" value={currentCentral?.name} readOnly />
               </div>
               <div className="grid gap-2">
                 <label htmlFor="ipAddress">IP Address</label>
-                <Input id="ipAddress" name="ipAddress" value={ipAddress} onChange={handleIpAddressChange} required />
-                {ipError && <div className="text-red-500">{ipError}</div>}
+                <Input id="ipAddress" name="ipAddress" type="number" defaultValue={currentCentral?.ipAddress} required />
               </div>
               <div className="grid gap-2">
                 <label htmlFor="status">Status</label>
-                <select id="status" name="status" value={status} onChange={handleStatusChange} required>
+                <select id="status" name="status" defaultValue={currentCentral?.status} required>
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
                 </select>
