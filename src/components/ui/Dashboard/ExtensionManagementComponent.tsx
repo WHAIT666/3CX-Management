@@ -20,6 +20,7 @@ export default function Component() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [currentCentral, setCurrentCentral] = useState(null)
+  const [ipError, setIpError] = useState("")
 
   useEffect(() => {
     async function loadData() {
@@ -42,11 +43,6 @@ export default function Component() {
     setData(data.filter((entry) => entry._id !== id))
     setSelectedEntries(selectedEntries.filter((entryId) => entryId !== id))
   }
-  const handleBulkDelete = async () => {
-    await Promise.all(selectedEntries.map(id => deleteCentral(id)))
-    setData(data.filter((entry) => !selectedEntries.includes(entry._id)))
-    setSelectedEntries([])
-  }
   const handleFilter = (status) => {
     setFilter(status)
   }
@@ -65,14 +61,29 @@ export default function Component() {
     }
   }
   const handleAddSubmit = async (central) => {
+    if (!validateIp(central.ipAddress)) {
+      setIpError("Invalid IP address format")
+      return
+    }
     const newCentral = await createCentral(central)
     setData([...data, newCentral])
     setShowAddModal(false)
+    setIpError("") // Clear error after successful submission
   }
   const handleEditSubmit = async (updatedCentral) => {
+    if (!validateIp(updatedCentral.ipAddress)) {
+      setIpError("Invalid IP address format")
+      return
+    }
     const central = await updateCentral(currentCentral._id, updatedCentral)
     setData(data.map((item) => (item._id === central._id ? central : item)))
     setShowEditModal(false)
+    setIpError("") // Clear error after successful submission
+  }
+
+  const validateIp = (ip) => {
+    const ipRegex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+    return ipRegex.test(ip)
   }
 
   const filteredData = data.filter(
@@ -118,11 +129,6 @@ export default function Component() {
           </DropdownMenuContent>
         </DropdownMenu>
         <Button onClick={() => setShowAddModal(true)}>Add Entry</Button>
-        {selectedEntries.length > 0 && (
-          <Button onClick={handleBulkDelete} variant="destructive">
-            Delete Selected
-          </Button>
-        )}
       </div>
       <div className="overflow-x-auto rounded-md border">
         <Table>
@@ -131,9 +137,9 @@ export default function Component() {
               <TableHead>
                 <Checkbox checked={selectedEntries.length === filteredData.length} onCheckedChange={handleSelectAll} />
               </TableHead>
-              <TableHead className="cursor-pointer" onClick={() => handleSort("_id")}>
+              <TableHead className="cursor-pointer" onClick={() => handleSort("id")}>
                 ID
-                {sort.key === "_id" && <span className="ml-1">{sort.order === "asc" ? "\u25B2" : "\u25BC"}</span>}
+                {sort.key === "id" && <span className="ml-1">{sort.order === "asc" ? "\u25B2" : "\u25BC"}</span>}
               </TableHead>
               <TableHead className="cursor-pointer" onClick={() => handleSort("name")}>
                 Name
@@ -161,7 +167,7 @@ export default function Component() {
                 </TableCell>
                 <TableCell>{entry._id}</TableCell>
                 <TableCell>{entry.name}</TableCell>
-                <TableCell className={entry.status === "Active" ? "text-green-500" : "text-red-500"}>
+                <TableCell className={entry.status.toLowerCase() === "active" ? "text-green-500" : "text-red-500"}>
                   {entry.status}
                 </TableCell>
                 <TableCell>{entry.ipAddress}</TableCell>
@@ -230,7 +236,7 @@ export default function Component() {
           <form onSubmit={(e) => {
             e.preventDefault()
             handleAddSubmit({
-              name: `Central ${data.length + 1}`,
+              name: `Central ${e.target.name.value}`,
               ipAddress: e.target.ipAddress.value,
               status: e.target.status.value
             })
@@ -238,15 +244,16 @@ export default function Component() {
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <label htmlFor="name">Name</label>
-                <Input id="name" name="name" value={`Central ${data.length + 1}`} readOnly />
+                <Input id="name" name="name" required />
               </div>
               <div className="grid gap-2">
                 <label htmlFor="ipAddress">IP Address</label>
-                <Input id="ipAddress" name="ipAddress" type="number" required />
+                <Input id="ipAddress" name="ipAddress" required />
+                {ipError && <p className="text-red-500">{ipError}</p>}
               </div>
               <div className="grid gap-2">
                 <label htmlFor="status">Status</label>
-                <select id="status" name="status" required>
+                <select id="status" name="status" className="input" required>
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
                 </select>
@@ -269,7 +276,7 @@ export default function Component() {
           <form onSubmit={(e) => {
             e.preventDefault()
             handleEditSubmit({
-              name: currentCentral.name,
+              name: `Central ${e.target.name.value}`,
               ipAddress: e.target.ipAddress.value,
               status: e.target.status.value
             })
@@ -277,15 +284,16 @@ export default function Component() {
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <label htmlFor="name">Name</label>
-                <Input id="name" name="name" value={currentCentral?.name} readOnly />
+                <Input id="name" name="name" defaultValue={currentCentral?.name.replace('Central ', '')} required />
               </div>
               <div className="grid gap-2">
                 <label htmlFor="ipAddress">IP Address</label>
-                <Input id="ipAddress" name="ipAddress" type="number" defaultValue={currentCentral?.ipAddress} required />
+                <Input id="ipAddress" name="ipAddress" defaultValue={currentCentral?.ipAddress} required />
+                {ipError && <p className="text-red-500">{ipError}</p>}
               </div>
               <div className="grid gap-2">
                 <label htmlFor="status">Status</label>
-                <select id="status" name="status" defaultValue={currentCentral?.status} required>
+                <select id="status" name="status" className="input" defaultValue={currentCentral?.status} required>
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
                 </select>
