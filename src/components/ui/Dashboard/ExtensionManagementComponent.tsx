@@ -86,6 +86,16 @@ export default function Component() {
     return ipRegex.test(ip)
   }
 
+  const handleIpChange = (e) => {
+    const value = e.target.value
+    if (/^[0-9.]*$/.test(value)) {
+      setIpError("")
+      e.target.value = value
+    } else {
+      setIpError("Invalid characters in IP address")
+    }
+  }
+
   const filteredData = data.filter(
     (entry) =>
       (filter === null ||
@@ -248,7 +258,7 @@ export default function Component() {
               </div>
               <div className="grid gap-2">
                 <label htmlFor="ipAddress">IP Address</label>
-                <Input id="ipAddress" name="ipAddress" required />
+                <Input id="ipAddress" name="ipAddress" onChange={handleIpChange} required />
                 {ipError && <p className="text-red-500">{ipError}</p>}
               </div>
               <div className="grid gap-2">
@@ -288,7 +298,7 @@ export default function Component() {
               </div>
               <div className="grid gap-2">
                 <label htmlFor="ipAddress">IP Address</label>
-                <Input id="ipAddress" name="ipAddress" defaultValue={currentCentral?.ipAddress} required />
+                <Input id="ipAddress" name="ipAddress" onChange={handleIpChange} defaultValue={currentCentral?.ipAddress} required />
                 {ipError && <p className="text-red-500">{ipError}</p>}
               </div>
               <div className="grid gap-2">
