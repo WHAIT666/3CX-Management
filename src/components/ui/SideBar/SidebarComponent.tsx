@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   ActivityIcon,
@@ -21,16 +22,16 @@ const SidebarComponent = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="hidden lg:block border-r bg-gray-100/40 dark:bg-gray-800/40 w-64 p-4">
+    <div className="hidden lg:block border-r bg-gray-100 w-64 p-4">
       <div className="flex flex-col gap-4">
-        <Link className="flex items-center gap-2 font-semibold" to="#">
+        <Link className="flex items-center gap-2 font-semibold" to="/">
           <Package2Icon className="h-8 w-8" />
           <span>3CX Management</span>
         </Link>
         <nav className="grid gap-1">
           <Link
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
-              isActive('/dashboard') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+              isActive('/dashboard') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900'
             }`}
             to="/dashboard"
           >
@@ -39,7 +40,7 @@ const SidebarComponent = () => {
           </Link>
           <Link
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
-              isActive('/dashboard/ExtensionManagement') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+              isActive('/dashboard/ExtensionManagement') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900'
             }`}
             to="/dashboard/ExtensionManagement"
           >
@@ -48,7 +49,7 @@ const SidebarComponent = () => {
           </Link>
           <Link
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
-              isActive('/dashboard/users') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+              isActive('/dashboard/users') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900'
             }`}
             to="/dashboard/users"
           >
@@ -57,7 +58,7 @@ const SidebarComponent = () => {
           </Link>
           <Link
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
-              isActive('/dashboard/phones') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+              isActive('/dashboard/phones') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900'
             }`}
             to="/dashboard/phones"
           >
@@ -66,7 +67,7 @@ const SidebarComponent = () => {
           </Link>
           <Link
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
-              isActive('/dashboard/groups') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+              isActive('/dashboard/groups') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900'
             }`}
             to="/dashboard/groups"
           >
@@ -75,72 +76,72 @@ const SidebarComponent = () => {
           </Link>
           <Link
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
-              isActive('') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+              isActive('/dashboard/office-hours') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900'
             }`}
-            to=""
+            to="/dashboard/office-hours"
           >
             <ClockIcon className="h-6 w-6" />
             Office Hours
           </Link>
           <Link
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
-              isActive('#') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+              isActive('/dashboard/reports') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900'
             }`}
-            to="#"
+            to="/dashboard/reports"
           >
             <BarChartIcon className="h-6 w-6" />
             Reports
           </Link>
           <Link
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
-              isActive('#') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+              isActive('/dashboard/event-log') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900'
             }`}
-            to="#"
+            to="/dashboard/event-log"
           >
             <ActivityIcon className="h-6 w-6" />
             Event Log
           </Link>
           <Link
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
-              isActive('#') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+              isActive('/dashboard/recordings') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900'
             }`}
-            to="#"
+            to="/dashboard/recordings"
           >
             <HeadphonesIcon className="h-6 w-6" />
             Recordings
           </Link>
           <Link
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
-              isActive('#') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+              isActive('/dashboard/backup') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900'
             }`}
-            to="#"
+            to="/dashboard/backup"
           >
             <DatabaseBackupIcon className="h-6 w-6" />
             Backup
           </Link>
           <Link
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
-              isActive('#') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+              isActive('/dashboard/integrations') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900'
             }`}
-            to="#"
+            to="/dashboard/integrations"
           >
             <ImportIcon className="h-6 w-6" />
             Integrations
           </Link>
           <Link
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
-              isActive('#') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+              isActive('/dashboard/advanced') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900'
             }`}
-            to="#"
+            to="/dashboard/advanced"
           >
             <SettingsIcon className="h-6 w-6" />
             Advanced
           </Link>
           <Link
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
-              isActive('#') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+              isActive('/dashboard/system') ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-gray-900'
             }`}
-            to="#"
+            to="/dashboard/system"
           >
             <ServerIcon className="h-6 w-6" />
             System

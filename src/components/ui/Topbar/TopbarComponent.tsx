@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { fetchUser } from '../../../services/api';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { UserIcon, ShieldCheckIcon, FileTextIcon, LogOutIcon } from 'lucide-react';
+import { UserIcon, ShieldCheckIcon, FileTextIcon, LogOutIcon, BookmarkIcon, CompassIcon, HomeIcon, MenuIcon, MountainIcon, SettingsIcon } from 'lucide-react';
+import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 
-const Topbar = () => {
+const TopBarComponent = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
@@ -28,10 +30,45 @@ const Topbar = () => {
   };
 
   return (
-    <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
-      <div className="flex-1">
-        <h1 className="font-semibold text-lg">3CX Management</h1>
-      </div>
+    <header className="flex h-16 items-center justify-between border-b bg-gray-100 px-4 sm:px-6 md:h-20 md:px-8">
+      <Link to="/" className="flex items-center gap-2">
+        <MountainIcon className="h-6 w-6 text-primary" />
+        <span className="text-lg font-semibold tracking-tight md:text-xl">Acme Inc</span>
+      </Link>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="icon" className="md:hidden">
+            <MenuIcon className="h-6 w-6" />
+            <span className="sr-only">Toggle navigation</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="md:hidden">
+          <nav className="grid gap-4 px-4 py-6 sm:px-6">
+            <Link to="/" className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground">
+              <HomeIcon className="h-5 w-5" />
+            </Link>
+            <Link to="/compass" className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground">
+              <CompassIcon className="h-5 w-5" />
+            </Link>
+            <Link to="/bookmark" className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground">
+              <BookmarkIcon className="h-5 w-5" />
+            </Link>
+            <Link to="/user" className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground">
+              <UserIcon className="h-5 w-5" />
+            </Link>
+            <Link to="/settings" className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground">
+              <SettingsIcon className="h-5 w-5" />
+            </Link>
+          </nav>
+        </SheetContent>
+      </Sheet>
+      <nav className="hidden gap-4 md:flex">
+        <Link to="/" className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground"></Link>
+        <Link to="/compass" className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground"></Link>
+        <Link to="/bookmark" className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground"></Link>
+        <Link to="/user" className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground"></Link>
+        <Link to="/settings" className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground"></Link>
+      </nav>
       <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -83,4 +120,4 @@ const Topbar = () => {
   );
 };
 
-export default Topbar;
+export default TopBarComponent;
