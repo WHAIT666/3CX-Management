@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { fetchUser } from '../../../services/api';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 
 const TopBarComponent = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -29,12 +30,45 @@ const TopBarComponent = () => {
     return `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}`;
   };
 
+  const getPageTitle = () => {
+    switch (location.pathname) {
+      case '/dashboard':
+        return 'Dashboard';
+      case '/dashboard/ExtensionManagement':
+        return 'Extension Management';
+      case '/dashboard/users':
+        return 'Users';
+      case '/dashboard/phones':
+        return 'Phones';
+      case '/dashboard/groups':
+        return 'Departments';
+      case '/dashboard/office-hours':
+        return 'Office Hours';
+      case '/dashboard/reports':
+        return 'Reports';
+      case '/dashboard/event-log':
+        return 'Event Log';
+      case '/dashboard/recordings':
+        return 'Recordings';
+      case '/dashboard/backup':
+        return 'Backup';
+      case '/dashboard/integrations':
+        return 'Integrations';
+      case '/dashboard/advanced':
+        return 'Advanced';
+      case '/dashboard/system':
+        return 'System';
+      default:
+        return 'Acme Inc';
+    }
+  };
+
   return (
     <header className="flex h-16 items-center justify-between border-b bg-gray-100 px-4 sm:px-6 md:h-20 md:px-8">
-      <Link to="/" className="flex items-center gap-2">
+      <div className="flex items-center gap-2">
         <MountainIcon className="h-6 w-6 text-primary" />
-        <span className="text-lg font-semibold tracking-tight md:text-xl">Acme Inc</span>
-      </Link>
+        <span className="text-lg font-semibold tracking-tight md:text-xl">{getPageTitle()}</span>
+      </div>
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="md:hidden">
