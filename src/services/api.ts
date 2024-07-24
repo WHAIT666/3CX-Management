@@ -39,6 +39,12 @@ export const login3CX = async (fqdn: string, identifier: string, password: strin
   return response.data;
 };
 
+export const verifyEmail = async (id: string, code: string) => {
+  const response = await axiosInstance.post(`/users/verify/${id}/${code}`);
+  return response.data;
+};
+
+
 export const fetchUser = async () => {
   const response = await axiosInstance.get('/users/me');
   return response.data;
