@@ -3,7 +3,7 @@
 import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api';
-const THREE_CX_API_URL = 'https://172.31.0.139/xapi/v1';
+const THREE_CX_API_URL = 'https://172.28.0.7/xapi/v1'; 
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
@@ -35,7 +35,7 @@ export const login3CX = async (fqdn: string, identifier: string, password: strin
     Username: identifier,
     Password: password
   };
-  const response = await axios.post('https://172.31.0.139/webclient/api/Login/GetAccessToken', payload);
+  const response = await axios.post('https://172.28.0.7/webclient/api/Login/GetAccessToken', payload);
   return response.data;
 };
 
@@ -120,8 +120,8 @@ export const requestPasswordReset = async (email: string) => {
   return response.data;
 };
 
-export const resetPassword = async (id: string, code: string, password: string) => {
-  const response = await axiosInstance.post(`/users/resetpassword/${id}/${code}`, { password });
+export const resetPassword = async (id: string, code: string, password: string, passwordConfirmation: string) => {
+  const response = await axios.post(`/api/users/resetpassword/${id}/${code}`, { password, passwordConfirmation });
   return response.data;
 };
 

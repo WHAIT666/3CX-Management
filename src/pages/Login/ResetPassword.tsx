@@ -1,4 +1,4 @@
-// src/pages/Login/ResetPassword.tsx
+// ResetPassword.tsx
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -31,8 +31,8 @@ const ResetPassword = () => {
     }
 
     try {
-      console.log('Sending reset password request with:', { id, code, password });
-      const response = await resetPassword(id, code, password);
+      console.log('Sending reset password request with:', { id, code, password, passwordConfirmation: confirmPassword });
+      const response = await resetPassword(id, code, password, confirmPassword);
       setSuccess('Password has been reset successfully');
     } catch (error) {
       console.error('Error during reset password:', error);
