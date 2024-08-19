@@ -1,100 +1,77 @@
-import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationNext } from "@/components/ui/pagination"
-import { FilterIcon, CheckIcon, EllipsisVerticalIcon, TrashIcon, FilePenIcon } from "lucide-react"
-import { fetchCentrals, createCentral, updateCentral, deleteCentral } from "@/services/api" // Adjust import path as needed
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
+import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationNext } from "@/components/ui/pagination";
+import { FilterIcon, CheckIcon, EllipsisVerticalIcon, TrashIcon, FilePenIcon } from "lucide-react";
+import { fetchCentrals, createCentral, updateCentral, deleteCentral } from "@/services/api"; // Adjust import path as needed
+import CentralFormComponent from "../CentralsForm/CentralFormComponent"; // Adjust import path as needed
 
 export default function Component() {
-  const [data, setData] = useState([])
-  const [search, setSearch] = useState("")
-  const [sort, setSort] = useState({ key: null, order: null })
-  const [currentPage, setCurrentPage] = useState(1)
-  const [entriesPerPage, setEntriesPerPage] = useState(5)
-  const [filter, setFilter] = useState(null)
-  const [selectedEntries, setSelectedEntries] = useState([])
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [currentCentral, setCurrentCentral] = useState(null)
-  const [ipError, setIpError] = useState("")
+  const [data, setData] = useState([]);
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState({ key: null, order: null });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(5);
+  const [filter, setFilter] = useState(null);
+  const [selectedEntries, setSelectedEntries] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [currentCentral, setCurrentCentral] = useState(null);
 
   useEffect(() => {
     async function loadData() {
-      const centrals = await fetchCentrals()
-      setData(centrals)
+      const centrals = await fetchCentrals();
+      setData(centrals);
     }
-    loadData()
-  }, [])
+    loadData();
+  }, []);
 
-  const handleSearch = (e) => setSearch(e.target.value)
+  const handleSearch = (e) => setSearch(e.target.value);
   const handleSort = (key) => {
     if (sort.key === key) {
-      setSort({ key, order: sort.order === "asc" ? "desc" : "asc" })
+      setSort({ key, order: sort.order === "asc" ? "desc" : "asc" });
     } else {
-      setSort({ key, order: "asc" })
+      setSort({ key, order: "asc" });
     }
-  }
+  };
   const handleDelete = async (id) => {
-    await deleteCentral(id)
-    setData(data.filter((entry) => entry._id !== id))
-    setSelectedEntries(selectedEntries.filter((entryId) => entryId !== id))
-  }
+    await deleteCentral(id);
+    setData(data.filter((entry) => entry._id !== id));
+    setSelectedEntries(selectedEntries.filter((entryId) => entryId !== id));
+  };
   const handleFilter = (status) => {
-    setFilter(status)
-  }
+    setFilter(status);
+  };
   const handleSelectAll = () => {
     if (selectedEntries.length === filteredData.length) {
-      setSelectedEntries([])
+      setSelectedEntries([]);
     } else {
-      setSelectedEntries(filteredData.map((entry) => entry._id))
+      setSelectedEntries(filteredData.map((entry) => entry._id));
     }
-  }
+  };
   const handleSelectEntry = (id) => {
     if (selectedEntries.includes(id)) {
-      setSelectedEntries(selectedEntries.filter((entryId) => entryId !== id))
+      setSelectedEntries(selectedEntries.filter((entryId) => entryId !== id));
     } else {
-      setSelectedEntries([...selectedEntries, id])
+      setSelectedEntries([...selectedEntries, id]);
     }
-  }
+  };
+
   const handleAddSubmit = async (central) => {
-    if (!validateIp(central.ipAddress)) {
-      setIpError("Invalid IP address format")
-      return
-    }
-    const newCentral = await createCentral(central)
-    setData([...data, newCentral])
-    setShowAddModal(false)
-    setIpError("") // Clear error after successful submission
-  }
+    const newCentral = await createCentral(central);
+    setData([...data, newCentral]);
+    setShowAddModal(false);
+  };
+
   const handleEditSubmit = async (updatedCentral) => {
-    if (!validateIp(updatedCentral.ipAddress)) {
-      setIpError("Invalid IP address format")
-      return
-    }
-    const central = await updateCentral(currentCentral._id, updatedCentral)
-    setData(data.map((item) => (item._id === central._id ? central : item)))
-    setShowEditModal(false)
-    setIpError("") // Clear error after successful submission
-  }
-
-  const validateIp = (ip) => {
-    const ipRegex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
-    return ipRegex.test(ip)
-  }
-
-  const handleIpChange = (e) => {
-    const value = e.target.value
-    if (/^[0-9.]*$/.test(value)) {
-      setIpError("")
-      e.target.value = value
-    } else {
-      setIpError("Invalid characters in IP address")
-    }
-  }
+    const central = await updateCentral(currentCentral._id, updatedCentral);
+    setData(data.map((item) => (item._id === central._id ? central : item)));
+    setShowEditModal(false);
+    setCurrentCentral(null); // Clear the current central after editing
+  };
 
   const filteredData = data.filter(
     (entry) =>
@@ -102,19 +79,21 @@ export default function Component() {
         entry.status.toLowerCase() === filter.toLowerCase()) &&
       (entry.name.toLowerCase().includes(search.toLowerCase()) ||
         entry.status.toLowerCase().includes(search.toLowerCase()) ||
-        entry.ipAddress.toLowerCase().includes(search.toLowerCase())),
-  )
+        entry.ipAddress.toLowerCase().includes(search.toLowerCase()))
+  );
+
   const sortedData = sort.key
     ? filteredData.sort((a, b) => {
-        if (a[sort.key] < b[sort.key]) return sort.order === "asc" ? -1 : 1
-        if (a[sort.key] > b[sort.key]) return sort.order === "asc" ? 1 : -1
-        return 0
+        if (a[sort.key] < b[sort.key]) return sort.order === "asc" ? -1 : 1;
+        if (a[sort.key] > b[sort.key]) return sort.order === "asc" ? 1 : -1;
+        return 0;
       })
-    : filteredData
-  const indexOfLastEntry = currentPage * entriesPerPage
-  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage
-  const currentEntries = sortedData.slice(indexOfFirstEntry, indexOfLastEntry)
-  const totalPages = Math.ceil(sortedData.length / entriesPerPage)
+    : filteredData;
+
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = sortedData.slice(indexOfFirstEntry, indexOfLastEntry);
+  const totalPages = Math.ceil(sortedData.length / entriesPerPage);
 
   return (
     <div className="flex flex-col gap-4">
@@ -189,10 +168,12 @@ export default function Component() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => {
-                        setCurrentCentral(entry)
-                        setShowEditModal(true)
-                      }}>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setCurrentCentral(entry);
+                          setShowEditModal(true);
+                        }}
+                      >
                         <FilePenIcon className="h-4 w-4 mr-2" />
                         Edit
                       </DropdownMenuItem>
@@ -237,85 +218,21 @@ export default function Component() {
         </Pagination>
       </div>
 
-      <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Central</DialogTitle>
-            <DialogDescription>Enter the details for the new central.</DialogDescription>
-          </DialogHeader>
-          <form onSubmit={(e) => {
-            e.preventDefault()
-            handleAddSubmit({
-              name: `Central ${e.target.name.value}`,
-              ipAddress: e.target.ipAddress.value,
-              status: e.target.status.value
-            })
-          }}>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <label htmlFor="name">Name</label>
-                <Input id="name" name="name" required />
-              </div>
-              <div className="grid gap-2">
-                <label htmlFor="ipAddress">IP Address</label>
-                <Input id="ipAddress" name="ipAddress" onChange={handleIpChange} required />
-                {ipError && <p className="text-red-500">{ipError}</p>}
-              </div>
-              <div className="grid gap-2">
-                <label htmlFor="status">Status</label>
-                <select id="status" name="status" className="input" required>
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>Cancel</Button>
-              <Button type="submit">Add Central</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      {/* CentralFormComponent for Adding */}
+      <CentralFormComponent
+        showModal={showAddModal}
+        onSubmit={handleAddSubmit}
+        onClose={() => setShowAddModal(false)}
+      />
 
-      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Central</DialogTitle>
-            <DialogDescription>Update the details for the central.</DialogDescription>
-          </DialogHeader>
-          <form onSubmit={(e) => {
-            e.preventDefault()
-            handleEditSubmit({
-              name: `Central ${e.target.name.value}`,
-              ipAddress: e.target.ipAddress.value,
-              status: e.target.status.value
-            })
-          }}>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <label htmlFor="name">Name</label>
-                <Input id="name" name="name" defaultValue={currentCentral?.name.replace('Central ', '')} required />
-              </div>
-              <div className="grid gap-2">
-                <label htmlFor="ipAddress">IP Address</label>
-                <Input id="ipAddress" name="ipAddress" onChange={handleIpChange} defaultValue={currentCentral?.ipAddress} required />
-                {ipError && <p className="text-red-500">{ipError}</p>}
-              </div>
-              <div className="grid gap-2">
-                <label htmlFor="status">Status</label>
-                <select id="status" name="status" className="input" defaultValue={currentCentral?.status} required>
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowEditModal(false)}>Cancel</Button>
-              <Button type="submit">Save Changes</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      {/* CentralFormComponent for Editing */}
+      <CentralFormComponent
+        showModal={showEditModal}
+        onSubmit={handleEditSubmit}
+        onClose={() => setShowEditModal(false)}
+        central={currentCentral}
+        isEditing={true}
+      />
     </div>
-  )
+  );
 }

@@ -1,38 +1,94 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-interface CentralFormComponentProps {
-  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-}
+export default function CentralFormComponent({ central, onSubmit, onClose, showModal, isEditing = false }) {
+  const [name, setName] = useState("");
+  const [ipAddress, setIpAddress] = useState("");
+  const [status, setStatus] = useState("Active");
+  const [ipError, setIpError] = useState("");
 
-export default function CentralFormComponent({ onSubmit }: CentralFormComponentProps) {
+  useEffect(() => {
+    if (isEditing && central) {
+      setName(central.name.replace("Central ", ""));
+      setIpAddress(central.ipAddress);
+      setStatus(central.status);
+    }
+  }, [isEditing, central]);
+
+  const validateIp = (ip) => {
+    const ipRegex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    return ipRegex.test(ip);
+  };
+
+  const handleIpChange = (e) => {
+    const value = e.target.value;
+    if (/^[0-9.]*$/.test(value)) {
+      setIpError("");
+      setIpAddress(value);
+    } else {
+      setIpError("Invalid characters in IP address");
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validateIp(ipAddress)) {
+      setIpError("Invalid IP address format");
+      return;
+    }
+    onSubmit({ name: `Central ${name}`, ipAddress, status });
+    setIpError(""); // Clear error after successful submission
+  };
+
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle>3CX Configuration</CardTitle>
-        <CardDescription>Enter your 3CX details to connect your Central.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form className="grid gap-4" onSubmit={onSubmit}>
-          <div className="grid gap-2">
-            <Label htmlFor="fqdn">FQDN/URL</Label>
-            <Input id="fqdn" placeholder="Enter your 3CX FQDN or URL" required />
+    <Dialog open={showModal} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{isEditing ? "Edit Central" : "Add Central"}</DialogTitle>
+          <DialogDescription>{isEditing ? "Update the details for the central." : "Enter details for the new central."}</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit}>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <label htmlFor="name">Name</label>
+              <Input id="name" name="name" value={name} onChange={(e) => setName(e.target.value)} required />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="ipAddress">IP Address</label>
+              <Input
+                id="ipAddress"
+                name="ipAddress"
+                value={ipAddress}
+                onChange={handleIpChange}
+                required
+              />
+              {ipError && <p className="text-red-500">{ipError}</p>}
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="status">Status</label>
+              <select
+                id="status"
+                name="status"
+                className="input"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                required
+              >
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="extension">Extension Number</Label>
-            <Input id="extension" type="number" placeholder="Enter your 3CX extension number" required />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" placeholder="Enter your 3CX password" required />
-          </div>
-          <Button type="submit" className="w-full">
-            Connect to 3CX
-          </Button>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit">{isEditing ? "Save Changes" : "Add Central"}</Button>
+          </DialogFooter>
         </form>
-      </CardContent>
-    </Card>
+      </DialogContent>
+    </Dialog>
   );
 }
