@@ -7,6 +7,9 @@ export default function CentralFormComponent({ central, onSubmit, onClose, showM
   const [name, setName] = useState("");
   const [ipAddress, setIpAddress] = useState("");
   const [status, setStatus] = useState("Active");
+  const [fqdn, setFqdn] = useState("");
+  const [usernameOrCode, setUsernameOrCode] = useState("");
+  const [password, setPassword] = useState("");
   const [ipError, setIpError] = useState("");
 
   useEffect(() => {
@@ -14,6 +17,9 @@ export default function CentralFormComponent({ central, onSubmit, onClose, showM
       setName(central.name.replace("Central ", ""));
       setIpAddress(central.ipAddress);
       setStatus(central.status);
+      setFqdn(central.fqdnUrl || "");  // Add default value if editing
+      setUsernameOrCode(central.usernameOrCode || "");  // Add default value if editing
+      setPassword("");  // Password is not pre-filled for security reasons
     }
   }, [isEditing, central]);
 
@@ -38,7 +44,14 @@ export default function CentralFormComponent({ central, onSubmit, onClose, showM
       setIpError("Invalid IP address format");
       return;
     }
-    onSubmit({ name: `Central ${name}`, ipAddress, status });
+    onSubmit({ 
+      name: `Central ${name}`, 
+      ipAddress, 
+      status, 
+      fqdnUrl: fqdn,  // Include these new fields in submission
+      usernameOrCode, 
+      password 
+    });
     setIpError(""); // Clear error after successful submission
   };
 
@@ -79,6 +92,41 @@ export default function CentralFormComponent({ central, onSubmit, onClose, showM
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
+            </div>
+            {/* New fields for FQDN, Username/Code, and Password */}
+            <div className="grid gap-2">
+              <label htmlFor="fqdn">FQDN/URL</label>
+              <Input 
+                id="fqdn" 
+                name="fqdn" 
+                value={fqdn} 
+                onChange={(e) => setFqdn(e.target.value)} 
+                placeholder="Enter your 3CX FQDN or URL" 
+                required 
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="usernameOrCode">Security Code or Username</label>
+              <Input 
+                id="usernameOrCode" 
+                name="usernameOrCode" 
+                value={usernameOrCode} 
+                onChange={(e) => setUsernameOrCode(e.target.value)} 
+                placeholder="e.g., 1001 or email@example.com" 
+                required 
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="password">Password</label>
+              <Input 
+                id="password" 
+                name="password" 
+                type="password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                placeholder="Enter your 3CX password" 
+                required 
+              />
             </div>
           </div>
           <DialogFooter>
