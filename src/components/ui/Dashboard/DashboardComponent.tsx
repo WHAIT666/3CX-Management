@@ -1,24 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { fetchSystemStatus, login3CX } from '../../../services/api'; // Ensure this is correctly imported
+import { fetchSystemStatus } from '../../../services/api'; // Ajuste o import conforme a estrutura de seus arquivos
 import { FrameIcon } from 'lucide-react';
-import CentralFormComponent from '../CentralsForm/CentralFormComponent';
+import CentralFormComponent from '../CentralsForm/CentralFormComponent'; // Certifique-se de ajustar o caminho conforme necessário
 
 export default function Dashboard() {
   const [systemStatus, setSystemStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false); // Adicione este estado
 
   useEffect(() => {
     async function getSystemStatus() {
-      const accessToken = localStorage.getItem('3cxAccessToken');
-      if (!accessToken) {
-        setShowPopup(true); // Show the popup if no token is found
-        setLoading(false);
-        return;
-      }
-
       try {
         const statusData = await fetchSystemStatus();
         setSystemStatus(statusData);
@@ -31,23 +24,11 @@ export default function Dashboard() {
     getSystemStatus();
   }, []);
 
-  const handleFormSubmit = async (event) => {
+  const handleFormSubmit = (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const fqdn = formData.get('fqdn');
-    const identifier = formData.get('identifier');
-    const password = formData.get('password');
-    
-    try {
-      const tokenData = await login3CX(fqdn, identifier, password);
-      localStorage.setItem('3cxAccessToken', tokenData.access_token);
-      setShowPopup(false); // Hide the popup after successful login
-      setLoading(true); // Start loading again
-      const statusData = await fetchSystemStatus();
-      setSystemStatus(statusData); // Fetch system status after obtaining the token
-    } catch (error) {
-      setError('Failed to authenticate. Please check your credentials.');
-    }
+    // Aqui, você deve capturar os dados do formulário e fazer a requisição à API 3CX
+    // Após obter os tokens, defina showPopup para false
+    setShowPopup(false);
   };
 
   if (loading) {
@@ -72,44 +53,91 @@ export default function Dashboard() {
       </div>
       <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] bg-gray-100/40 flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10 dark:bg-gray-800/40">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {systemStatus && (
-            <>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">Version</CardTitle>
-                  <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{systemStatus.Version}</div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Activated: {systemStatus.Activated ? 'Yes' : 'No'}</p>
-                </CardContent>
-              </Card>
-              {/* Repeat similar Card components for other systemStatus fields */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">Extensions</CardTitle>
-                  <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{systemStatus.ExtensionsTotal}</div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Registered: {systemStatus.ExtensionsRegistered}</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">Trunks</CardTitle>
-                  <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{systemStatus.TrunksTotal}</div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Registered: {systemStatus.TrunksRegistered}</p>
-                </CardContent>
-              </Card>
-              {/* Add more Cards as needed */}
-            </>
-          )}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Version</CardTitle>
+              <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{systemStatus.Version}</div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Activated: {systemStatus.Activated ? 'Yes' : 'No'}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">FQDN</CardTitle>
+              <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{systemStatus.FQDN}</div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">WebMeeting: {systemStatus.WebMeetingFQDN}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">IP Address</CardTitle>
+              <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{systemStatus.Ip}</div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Local IP: {systemStatus.CurrentLocalIp}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Memory Usage</CardTitle>
+              <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{systemStatus.PhysicalMemoryUsage}%</div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Virtual Memory: {systemStatus.VirtualMemoryUsage}%</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Disk Usage</CardTitle>
+              <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{systemStatus.DiskUsage}%</div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Free Space: {systemStatus.FreeDiskSpace} bytes</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Active Calls</CardTitle>
+              <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{systemStatus.activeCalls}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Extensions</CardTitle>
+              <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{systemStatus.totalExtensions}</div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Registered: {systemStatus.ExtensionsRegistered}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Trunks</CardTitle>
+              <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{systemStatus.totalTrunks}</div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Registered: {systemStatus.TrunksRegistered}</p>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>
   );
 }
+
+
+
+
