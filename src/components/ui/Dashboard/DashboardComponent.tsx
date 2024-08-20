@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { fetchSystemStatus } from '../../../services/api'; // Ajuste o import conforme a estrutura de seus arquivos
+import { fetchSystemStatus } from '../../../services/api'; 
 import { FrameIcon } from 'lucide-react';
-import CentralFormComponent from '../CentralsForm/CentralFormComponent'; // Certifique-se de ajustar o caminho conforme necessário
 
 export default function Dashboard() {
   const [systemStatus, setSystemStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showPopup, setShowPopup] = useState(false); // Adicione este estado
 
   useEffect(() => {
     async function getSystemStatus() {
@@ -24,13 +22,6 @@ export default function Dashboard() {
     getSystemStatus();
   }, []);
 
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    // Aqui, você deve capturar os dados do formulário e fazer a requisição à API 3CX
-    // Após obter os tokens, defina showPopup para false
-    setShowPopup(false);
-  };
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -41,11 +32,6 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col w-full min-h-screen">
-      {showPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-          <CentralFormComponent onSubmit={handleFormSubmit} />
-        </div>
-      )}
       <div className="p-4 md:p-10">
         <div className="mb-4">
           <div className="text-lg font-semibold">System Information</div>
@@ -109,7 +95,7 @@ export default function Dashboard() {
               <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{systemStatus.activeCalls}</div>
+              <div className="text-2xl font-bold">{systemStatus.CallsActive}</div>
             </CardContent>
           </Card>
           <Card>
@@ -118,7 +104,7 @@ export default function Dashboard() {
               <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{systemStatus.totalExtensions}</div>
+              <div className="text-2xl font-bold">{systemStatus.ExtensionsTotal}</div>
               <p className="text-xs text-gray-500 dark:text-gray-400">Registered: {systemStatus.ExtensionsRegistered}</p>
             </CardContent>
           </Card>
@@ -128,8 +114,26 @@ export default function Dashboard() {
               <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{systemStatus.totalTrunks}</div>
+              <div className="text-2xl font-bold">{systemStatus.TrunksTotal}</div>
               <p className="text-xs text-gray-500 dark:text-gray-400">Registered: {systemStatus.TrunksRegistered}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Max Sim Calls</CardTitle>
+              <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{systemStatus.MaxSimCalls}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">MaxSimMeetingParticipants</CardTitle>
+              <FrameIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{systemStatus.MaxSimMeetingParticipants}</div>
             </CardContent>
           </Card>
         </div>
@@ -137,7 +141,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
-
-
-
