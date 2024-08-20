@@ -50,14 +50,15 @@ export const fetchUser = async () => {
   return response.data;
 };
 
+// Fetch the aggregated system status from your backend
 export const fetchSystemStatus = async () => {
-  const accessToken = localStorage.getItem('3cxAccessToken');
-  const response = await axiosInstance.get('/systemstatus', {
-    headers: {
-      '3cxAccessToken': accessToken
-    }
-  });
-  return response.data;
+  try {
+    const response = await axiosInstance.get('/aggregatedsystemstatus');
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch system status:', error);
+    throw error;
+  }
 };
 
 export const fetchExtensions = async () => {
