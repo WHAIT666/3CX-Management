@@ -1,3 +1,4 @@
+import '../../../assets/Spinner.css';
 import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { fetchSystemStatus } from '../../../services/api'; 
@@ -23,9 +24,12 @@ export default function Dashboard() {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="spinner"></div>
+      </div>
+    );
   }
-
   if (error) {
     return <div>Error: {error}</div>;
   }
