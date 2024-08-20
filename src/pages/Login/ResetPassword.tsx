@@ -1,4 +1,3 @@
-// ResetPassword.tsx
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
