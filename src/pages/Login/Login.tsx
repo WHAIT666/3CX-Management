@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import loginImage from "../../assets/techbasepreto.png";
 import { login } from '../../services/api'; // Import the login function
 
-export default function LoginComponent() {
+export default function LoginComponent({ setIsAuthenticated }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,10 +17,20 @@ export default function LoginComponent() {
     setError('');
 
     try {
-      const { accessToken, refreshToken } = await login(email, password);
+      const { accessToken, refreshToken, expiresIn } = await login(email, password);
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
-      navigate('/dashboard'); // Redirect to the dashboard after login
+
+      // Automatically log out the user when the token expires
+      setTimeout(() => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        setIsAuthenticated(false);
+        navigate('/login');
+      }, 3600 * 1000); // 1 hour in milliseconds
+
+      setIsAuthenticated(true);
+      navigate('/dashboard');
     } catch (err) {
       setError('Login failed. Please check your credentials and try again.');
     }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
@@ -14,55 +14,67 @@ import VerifyEmail from './pages/Login/VerifyEmail';
 import NotFound from './pages/Notfound/404';
 
 function AppRouter() {
-  const accessToken = localStorage.getItem('accessToken');
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('accessToken'));
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIsAuthenticated(!!localStorage.getItem('accessToken'));
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to={accessToken ? "/dashboard" : "/login"} />} />
+        <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
         <Route 
           path="/login" 
-          element={accessToken ? <Navigate to="/dashboard" /> : <Login />} 
+          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login setIsAuthenticated={setIsAuthenticated} />} 
         />
         <Route 
           path="/register" 
-          element={accessToken ? <Navigate to="/dashboard" /> : <Register />} 
+          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Register />} 
         />
         <Route 
           path="/forgot-password" 
-          element={accessToken ? <Navigate to="/dashboard" /> : <ForgotPassword />} 
+          element={isAuthenticated ? <Navigate to="/dashboard" /> : <ForgotPassword />} 
         />
         <Route 
           path="/reset-password" 
-          element={accessToken ? <Navigate to="/dashboard" /> : <ResetPassword />} 
+          element={isAuthenticated ? <Navigate to="/dashboard" /> : <ResetPassword />} 
         />
         <Route 
           path="/verify-email" 
-          element={accessToken ? <Navigate to="/dashboard" /> : <VerifyEmail />} 
+          element={isAuthenticated ? <Navigate to="/dashboard" /> : <VerifyEmail />} 
         />
         <Route 
           path="/dashboard" 
-          element={accessToken ? <Dashboard /> : <Navigate to="/login" />} 
+          element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/dashboard/ExtensionManagement" 
-          element={accessToken ? <ExtensionManagement /> : <Navigate to="/login" />} 
+          element={isAuthenticated ? <ExtensionManagement /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/dashboard/Users" 
-          element={accessToken ? <Users /> : <Navigate to="/login" />} 
+          element={isAuthenticated ? <Users /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/dashboard/Phones" 
-          element={accessToken ? <Phones /> : <Navigate to="/login" />} 
+          element={isAuthenticated ? <Phones /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/dashboard/Groups" 
-          element={accessToken ? <Groups /> : <Navigate to="/login" />} 
+          element={isAuthenticated ? <Groups /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/dashboard/profile" 
-          element={accessToken ? <Profile /> : <Navigate to="/login" />} 
+          element={isAuthenticated ? <Profile /> : <Navigate to="/login" />} 
         />
         <Route path="*" element={<NotFound />} />
       </Routes>
