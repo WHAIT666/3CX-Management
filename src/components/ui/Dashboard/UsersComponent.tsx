@@ -1,35 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from '@/components/ui/table';
 import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from '@/components/ui/dropdown-menu';
 import { UserPlusIcon, TrashIcon, UploadIcon, DownloadIcon, LockIcon, ComputerIcon, ChromeIcon, CopyIcon, RefreshCwIcon, CheckIcon, EllipsisVerticalIcon } from 'lucide-react';
-import { fetchUsers, deleteUser } from '@/services/api'; // Adjust import path as needed
 
 export default function UsersComponent() {
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    async function loadUsers() {
-      try {
-        const usersData = await fetchUsers();
-        setUsers(usersData);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    }
-    loadUsers();
-  }, []);
-
-  const handleDeleteUser = async (userId) => {
-    try {
-      await deleteUser(userId);
-      setUsers(users.filter(user => user.Id !== userId));
-    } catch (error) {
-      console.error('Error deleting user:', error);
-    }
-  };
+  const [users, setUsers] = useState([
+    // Example users for demonstration
+    {
+      Id: 1,
+      DisplayName: 'John Doe',
+      EmailAddress: 'john.doe@example.com',
+      Number: '1234',
+      Groups: [{ Name: 'Sales' }],
+      Require2FA: true,
+    },
+    {
+      Id: 2,
+      DisplayName: 'Jane Smith',
+      EmailAddress: 'jane.smith@example.com',
+      Number: '5678',
+      Groups: [{ Name: 'Marketing' }],
+      Require2FA: false,
+    },
+  ]);
 
   return (
     <div>
@@ -117,7 +113,7 @@ export default function UsersComponent() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem>Edit User</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDeleteUser(user.Id)}>Remove User</DropdownMenuItem>
+                      <DropdownMenuItem>Remove User</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api';
-const THREE_CX_API_URL = 'https://172.28.0.7/xapi/v1'; 
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
@@ -124,33 +123,5 @@ export const resetPassword = async (id: string, code: string, password: string, 
   return response.data;
 };
 
-export const fetchUsers = async () => {
-  try {
-    const accessToken = localStorage.getItem('3cxAccessToken');
-    const response = await axiosInstance.get('/users/3cx', {
-      headers: {
-        '3cxaccesstoken': accessToken
-      }
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Failed to fetch users:', error);
-    throw error;
-  }
-};
 
-export const deleteUser = async (id) => {
-  try {
-    const accessToken = localStorage.getItem('3cxAccessToken');
-    const response = await axiosInstance.delete(`/users/3cx/${id}`, {
-      headers: {
-        '3cxaccesstoken': accessToken
-      }
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Failed to delete user:', error);
-    throw error;
-  }
-};
 
