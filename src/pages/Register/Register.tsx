@@ -1,117 +1,134 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { useTheme } from "@/components/ui/theme-provider";
-import loginImage from "../../assets/techbase.png";
+import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { User, Mail, Lock, X, Check } from "lucide-react"
 
-async function loginUser(credentials) {
-  return fetch('http://localhost:3000/api/sessions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(credentials)
-  }).then(async (response) => {
-    const data = await response.json();
-    if (!response.ok) {
-      let errorMessage = 'Login failed';
-      if (response.status === 401) {
-        errorMessage = 'Incorrect email or password';
-      } else if (response.status === 400) {
-        errorMessage = 'Invalid credentials';
-      }
-      throw new Error(errorMessage);
-    }
-    return {
-      accessToken: data.accessToken,
-      refreshToken: data.refreshToken
-    };
-  });
-}
+export default function Component() {
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [passwordStrength, setPasswordStrength] = useState(0)
 
-function Login() {
-  const navigate = useNavigate();
-  const { theme } = useTheme();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const checkPasswordStrength = (pass: string) => {
+    let strength = 0
+    if (pass.length >= 6) strength++
+    if (pass.match(/[A-Z]/)) strength++
+    if (pass.match(/[a-z]/)) strength++
+    if (pass.match(/[0-9]/)) strength++
+    if (pass.match(/[^A-Za-z0-9]/)) strength++
+    setPasswordStrength(strength)
+  }
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (accessToken && refreshToken) {
-      navigate('/dashboard');
-    }
-  }, [navigate]);
+    checkPasswordStrength(password)
+  }, [password])
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    try {
-      setError('');
-      const { accessToken, refreshToken } = await loginUser({ email, password });
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      navigate('/dashboard');
-    } catch (error) {
-      setError(error.message);
-      setPassword(''); // Clear password field on error
-    }
-  };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Handle form submission
+    console.log("Form submitted:", { name, email, password })
+  }
+
+  const PasswordRequirement = ({ met, text }: { met: boolean; text: string }) => (
+    <li className="flex items-center space-x-2">
+      {met ? (
+        <Check className="w-4 h-4 text-green-500" />
+      ) : (
+        <X className="w-4 h-4 text-gray-300" />
+      )}
+      <span className={met ? "text-green-500" : "text-gray-500"}>{text}</span>
+    </li>
+  )
+
+  const getStrengthColor = (strength: number) => {
+    const colors = ['#FF4136', '#FF851B', '#FFDC00', '#2ECC40', '#0074D9']
+    return colors[strength] || colors[0]
+  }
 
   return (
-    <div className={`flex items-center justify-center h-screen bg-gray-100 ${theme === 'dark' ? 'dark:bg-gray-900' : 'bg-gray-100'}`}>
-      <Card className="w-full max-w-md p-6 bg-white shadow-lg dark:bg-gray-950">
-        <CardHeader className="text-center relative">
-          <img 
-            src={loginImage} 
-            alt="Login" 
-            className="mx-auto mb-4" 
-            style={{ width: "150px", height: "150px" }}
-          />
-          <CardTitle className="text-2xl font-bold">Login</CardTitle>
-          <CardDescription className={`text-gray-500 ${theme === 'dark' ? 'dark:text-gray-400' : 'text-gray-500'}`}>
-            Enter your credentials to access your account.
-          </CardDescription>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <Card className="w-full max-w-md bg-white shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center text-gray-800">Create Account</CardTitle>
         </CardHeader>
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" placeholder="Email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+            <div className="relative">
+              <Label htmlFor="name" className="sr-only">Name</Label>
+              <Input 
+                id="name" 
+                type="text" 
+                value={name} 
+                onChange={(e) => setName(e.target.value)} 
+                placeholder="Name"
+                className="pl-10 bg-gray-100 border-gray-300"
+                required
+              />
+              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            </div>
+            <div className="relative">
+              <Label htmlFor="email" className="sr-only">Email</Label>
+              <Input 
+                id="email" 
+                type="email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                placeholder="Email"
+                className="pl-10 bg-gray-100 border-gray-300"
+                required
+              />
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            </div>
+            <div className="relative">
+              <Label htmlFor="password" className="sr-only">Password</Label>
+              <Input 
+                id="password" 
+                type="password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                placeholder="Password"
+                className="pl-10 bg-gray-100 border-gray-300"
+                required
+              />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" placeholder="Password" required type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            </div>
-            {error && (
-              <div className="text-red-500 text-center">
-                {error === 'Incorrect email or password' ? (
-                  <>Incorrect email or password. Please try again.</>
-                ) : error === 'Invalid credentials' ? (
-                  <>Invalid credentials. Please check your email and password.</>
-                ) : (
-                  <>An error occurred during login. Please try again later.</>
-                )}
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Password strength</span>
+                <span className="text-gray-600">{['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'][passwordStrength]}</span>
               </div>
-            )}
-            <div className="text-center text-sm">
-              <a href="/forgot-password" className={`${theme === 'dark' ? 'text-white' : 'text-black'} hover:underline`}>
-                Forgot Password?
-              </a>
+              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div 
+                  className="h-full transition-all duration-300 ease-in-out"
+                  style={{
+                    width: `${(passwordStrength / 5) * 100}%`,
+                    backgroundColor: getStrengthColor(passwordStrength),
+                  }}
+                />
+              </div>
+              <ul className="text-xs space-y-1">
+                <PasswordRequirement met={password.length >= 6} text="At least 6 characters" />
+                <PasswordRequirement met={!!password.match(/[A-Z]/)} text="Contains uppercase letter" />
+                <PasswordRequirement met={!!password.match(/[a-z]/)} text="Contains lowercase letter" />
+                <PasswordRequirement met={!!password.match(/[0-9]/)} text="Contains a number" />
+                <PasswordRequirement met={!!password.match(/[^A-Za-z0-9]/)} text="Contains special character" />
+              </ul>
             </div>
           </CardContent>
-          <CardFooter className="text-center">
-            <Button className="w-full" type="submit">
-              Login
-            </Button>
+          <CardFooter className="flex flex-col space-y-4">
+            <Button type="submit" className="w-full bg-gray-800 hover:bg-gray-700 text-white">Sign Up</Button>
+            <p className="text-sm text-center text-gray-600">
+              Already have an account?{" "}
+              <Link to="/login" className="text-gray-800 hover:underline">
+                Login
+              </Link>
+            </p>
           </CardFooter>
         </form>
       </Card>
     </div>
-  );
+  )
 }
-
-export default Login;

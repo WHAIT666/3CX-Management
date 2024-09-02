@@ -57,7 +57,7 @@ const TopBarComponent = () => {
       case '/dashboard/system':
         return 'System';
       default:
-        return 'Acme Inc';
+        return 'Profile';
     }
   };
 
