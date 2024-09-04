@@ -14,15 +14,16 @@ const TopBarComponent = () => {
 
   useEffect(() => {
     const getUser = async () => {
-      // Assuming user data is already fetched by Zustand store
-      setLocalUser(user); 
+      setLocalUser(user);
     };
     getUser();
   }, [user]);
 
-  const getInitials = (firstName, lastName) => {
-    if (!firstName || !lastName) return 'JD'; // Fallback initials
-    return `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}`;
+  const getInitials = (name) => {
+    if (!name) return 'AS'; // Fallback initials
+    const names = name.split(" ");
+    const initials = names.length >= 2 ? `${names[0][0]}${names[1][0]}` : `${names[0][0]}`;
+    return initials.toUpperCase();
   };
 
   const getPageTitle = () => {
@@ -85,7 +86,7 @@ const TopBarComponent = () => {
             <div className="cursor-pointer">
               <Avatar className="w-10 h-10 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center">
                 <AvatarImage src="" className="hidden" />
-                <AvatarFallback className="uppercase">{localUser ? getInitials(localUser.firstName, localUser.lastName) : 'JD'}</AvatarFallback>
+                <AvatarFallback className="uppercase">{localUser ? getInitials(`${localUser.firstName} ${localUser.lastName}`) : 'JD'}</AvatarFallback>
               </Avatar>
             </div>
           </DropdownMenuTrigger>
@@ -94,10 +95,10 @@ const TopBarComponent = () => {
               <div className="flex items-center space-x-3">
                 <Avatar className="w-12 h-12 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center">
                   <AvatarImage src="" className="hidden" />
-                  <AvatarFallback className="uppercase">{localUser ? getInitials(localUser.firstName, localUser.lastName) : 'JD'}</AvatarFallback>
+                  <AvatarFallback className="uppercase">{localUser ? getInitials(`${localUser.firstName} ${localUser.lastName}`) : 'JD'}</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
-                  <span className="font-medium text-gray-900">{localUser ? `${localUser.firstName} ${localUser.lastName}` : 'André Santos'}</span>
+                  <span className="font-medium text-gray-900">{localUser ? `${localUser.firstName || ''} ${localUser.lastName || ''}` : 'André Santos'}</span>
                   <span className="text-sm text-gray-500">{localUser ? localUser.email : 'andresantosuwu@gmail.com'}</span>
                 </div>
               </div>
