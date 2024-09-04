@@ -4,6 +4,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { UserIcon, ShieldCheckIcon, FileTextIcon, LogOutIcon, MountainIcon } from 'lucide-react';
 import { useAuthStore } from "../../../Store/AuthStore"; // Import your auth store
+import toast from 'react-hot-toast'; // Import the toast for notifications
 
 const TopBarComponent = () => {
   const navigate = useNavigate();
@@ -59,6 +60,7 @@ const TopBarComponent = () => {
 
   const handleLogout = () => {
     logout(); // Call the logout function from Zustand store
+    toast.success("You have been logged out successfully!"); // Show success toast
     navigate('/login'); // Redirect to login after logging out
   };
 
