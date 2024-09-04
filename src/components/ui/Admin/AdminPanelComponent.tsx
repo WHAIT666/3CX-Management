@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useMemo } from "react"
+import React, { useState, useMemo, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PlusIcon, Pencil, Trash2, Users, UserPlus, UserMinus, BarChart2, TrendingUp, PieChart as PieChartIcon } from "lucide-react"
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts"
+import { fetchUserStatistics } from "@/services/api" // Importing API service for fetching statistics
 
 type User = {
   id: number
@@ -32,6 +33,23 @@ export default function EnhancedAdminPanel() {
   const [newUser, setNewUser] = useState<Omit<User, "id" | "createdAt">>({ name: "", email: "", role: "" })
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [showStatistics, setShowStatistics] = useState(false)
+  const [stats, setStats] = useState({ totalUsers: 0, adminUsers: 0, regularUsers: 0 })
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadStatistics = async () => {
+      try {
+        const data = await fetchUserStatistics()
+        setStats(data)
+      } catch (err) {
+        setError('Failed to load user statistics')
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadStatistics()
+  }, [])
 
   const addUser = () => {
     const currentDate = new Date().toISOString().split('T')[0]
@@ -67,6 +85,17 @@ export default function EnhancedAdminPanel() {
     return Object.entries(growth).map(([date, count]) => ({ date, count })).sort((a, b) => a.date.localeCompare(b.date))
   }, [users])
 
+  const cumulativeGrowth = useMemo(() => {
+    let total = 0
+    return userGrowth.map(({ date, count }) => {
+      total += count
+      return { date, total }
+    })
+  }, [userGrowth])
+
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>{error}</p>
+
   return (
     <div className="flex-1 overflow-hidden">
       <div className="flex items-center justify-between p-4 border-b">
@@ -87,8 +116,8 @@ export default function EnhancedAdminPanel() {
                   <Users className="h-4 w-4 text-white" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{users.length}</div>
-                  <p className="text-xs text-rose-100">+{users.length} from last month</p>
+                  <div className="text-2xl font-bold">{stats.totalUsers}</div>
+                  <p className="text-xs text-rose-100">+{stats.totalUsers} from last month</p>
                 </CardContent>
               </Card>
               <Card className="bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
@@ -97,8 +126,8 @@ export default function EnhancedAdminPanel() {
                   <UserPlus className="h-4 w-4 text-white" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{users.filter(user => user.role === "Admin").length}</div>
-                  <p className="text-xs text-blue-100">+2 from last month</p>
+                  <div className="text-2xl font-bold">{stats.adminUsers}</div>
+                  <p className="text-xs text-blue-100">+{stats.adminUsers} from last month</p>
                 </CardContent>
               </Card>
               <Card className="bg-gradient-to-br from-green-500 to-emerald-500 text-white">
@@ -107,8 +136,8 @@ export default function EnhancedAdminPanel() {
                   <UserMinus className="h-4 w-4 text-white" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{users.filter(user => user.role === "User").length}</div>
-                  <p className="text-xs text-green-100">+15 from last month</p>
+                  <div className="text-2xl font-bold">{stats.regularUsers}</div>
+                  <p className="text-xs text-green-100">+{stats.regularUsers} from last month</p>
                 </CardContent>
               </Card>
               <Card className="bg-gradient-to-br from-yellow-500 to-orange-500 text-white">
@@ -177,6 +206,27 @@ export default function EnhancedAdminPanel() {
                 </CardContent>
               </Card>
             </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <TrendingUp className="mr-2 h-4 w-4 text-muted-foreground" />
+                  Cumulative User Growth
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={cumulativeGrowth}>
+                      <XAxis dataKey="date" />
+                      <YAxis allowDecimals={false} />
+                      <Tooltip />
+                      <Line type="monotone" dataKey="total" stroke="#8884d8" strokeWidth={2} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         ) : (
           <div className="space-y-6">

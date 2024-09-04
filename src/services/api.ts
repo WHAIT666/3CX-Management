@@ -108,10 +108,10 @@ export const updateUserRole = async (userId, newRole) => {
 
 export const fetchUserStatistics = async () => {
   try {
-    const response = await axios.get('/api/dashboard-stats'); // This should match the backend route
-    return response.data;
+    const response = await axiosInstance.get('/dashboard-stats'); // Use axiosInstance here
+    return response.data; // Expect { totalUsers, adminUsers, regularUsers }
   } catch (error) {
     console.error('Failed to fetch user statistics', error);
-    throw new Error('Failed to fetch user statistics');
+    throw error;
   }
 };
