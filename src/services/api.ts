@@ -95,16 +95,9 @@ export const resetPassword = async (id: string, code: string, password: string, 
 
 // Fetch all users
 export const fetchUsers = async () => {
-  const response = await axios.get("/api/users"); // Adjust API endpoint as needed
+  const response = await axiosInstance.get('/users');  // Adjust API endpoint if needed
   return response.data;
 };
-
-// Update user role
-export const updateUserRole = async (userId, newRole) => {
-  const response = await axios.patch(`/api/users/${userId}/role`, { role: newRole });
-  return response.data;
-};
-
 
 export const fetchUserStatistics = async () => {
   try {
@@ -114,4 +107,23 @@ export const fetchUserStatistics = async () => {
     console.error('Failed to fetch user statistics', error);
     throw error;
   }
+};
+
+
+// Create a new user (Admin)
+export const createUser = async (userData: any) => {
+  const response = await axiosInstance.post('/users', userData); // Requires Admin role
+  return response.data;
+};
+
+// Update user role
+export const updateUserRole = async (userId: string, newRole: string) => {
+  const response = await axiosInstance.put(`/users/${userId}/role`, { role: newRole });
+  return response.data;
+};
+
+// Delete a user
+export const deleteUser = async (userId: string) => {
+  const response = await axiosInstance.delete(`/users/${userId}`);
+  return response.data;
 };

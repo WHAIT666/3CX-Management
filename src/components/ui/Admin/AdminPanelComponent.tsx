@@ -9,10 +9,10 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PlusIcon, Pencil, Trash2, Users, UserPlus, UserMinus, BarChart2, TrendingUp, PieChart as PieChartIcon } from "lucide-react"
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts"
-import { fetchUserStatistics } from "@/services/api" // Importing API service for fetching statistics
+import { fetchUserStatistics, fetchUsers, deleteUser, updateUserRole } from "@/services/api" // Importing API services
 
 type User = {
-  id: number
+  id: string
   name: string
   email: string
   role: string
@@ -22,14 +22,7 @@ type User = {
 const COLORS = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
 
 export default function EnhancedAdminPanel() {
-  const [users, setUsers] = useState<User[]>([
-    { id: 1, name: "John Doe", email: "john@example.com", role: "Admin", createdAt: "2023-01-15" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", role: "User", createdAt: "2023-02-20" },
-    { id: 3, name: "Bob Johnson", email: "bob@example.com", role: "Editor", createdAt: "2023-03-10" },
-    { id: 4, name: "Alice Brown", email: "alice@example.com", role: "User", createdAt: "2023-04-05" },
-    { id: 5, name: "Charlie Davis", email: "charlie@example.com", role: "User", createdAt: "2023-05-12" },
-  ])
-
+  const [users, setUsers] = useState<User[]>([])  // Initialize with an empty array
   const [newUser, setNewUser] = useState<Omit<User, "id" | "createdAt">>({ name: "", email: "", role: "" })
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [showStatistics, setShowStatistics] = useState(false)
@@ -38,17 +31,29 @@ export default function EnhancedAdminPanel() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    // Fetch users and statistics on component mount
     const loadStatistics = async () => {
       try {
-        const data = await fetchUserStatistics()
-        setStats(data)
+        const statsData = await fetchUserStatistics()
+        setStats(statsData)
       } catch (err) {
         setError('Failed to load user statistics')
       } finally {
         setLoading(false)
       }
     }
+
+    const loadUsers = async () => {
+      try {
+        const usersData = await fetchUsers();  // Fetch users from API
+        setUsers(usersData);  // Set the fetched users
+      } catch (err) {
+        setError('Failed to load users')
+      }
+    }
+
     loadStatistics()
+    loadUsers()
   }, [])
 
   const addUser = () => {
@@ -57,15 +62,25 @@ export default function EnhancedAdminPanel() {
     setNewUser({ name: "", email: "", role: "" })
   }
 
-  const updateUser = () => {
+  const updateUser = async () => {
     if (editingUser) {
-      setUsers(users.map((user) => (user.id === editingUser.id ? editingUser : user)))
-      setEditingUser(null)
+      try {
+        const updatedUserData = await updateUserRole(editingUser.id, editingUser.role);  // Update user role via API
+        setUsers(users.map((user) => (user.id === updatedUserData.id ? updatedUserData : user)))  // Update UI
+        setEditingUser(null)
+      } catch (err) {
+        setError("Failed to update user")
+      }
     }
   }
 
-  const deleteUser = (id: number) => {
-    setUsers(users.filter((user) => user.id !== id))
+  const handleDeleteUser = async (id: string) => {
+    try {
+      await deleteUser(id);  // Call API to delete user
+      setUsers(users.filter((user) => user.id !== id))  // Update UI after deletion
+    } catch (err) {
+      setError("Failed to delete user")
+    }
   }
 
   const roleDistribution = useMemo(() => {
@@ -138,16 +153,6 @@ export default function EnhancedAdminPanel() {
                 <CardContent>
                   <div className="text-2xl font-bold">{stats.regularUsers}</div>
                   <p className="text-xs text-green-100">+{stats.regularUsers} from last month</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-gradient-to-br from-yellow-500 to-orange-500 text-white">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Editors</CardTitle>
-                  <Pencil className="h-4 w-4 text-white" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{users.filter(user => user.role === "Editor").length}</div>
-                  <p className="text-xs text-yellow-100">+5 from last month</p>
                 </CardContent>
               </Card>
             </div>
@@ -307,48 +312,51 @@ export default function EnhancedAdminPanel() {
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Edit User</DialogTitle>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="edit-name" className="text-right">
-                                  Name
-                                </Label>
-                                <Input
-                                  id="edit-name"
-                                  value={editingUser?.name}
-                                  onChange={(e) => setEditingUser({ ...editingUser!, name: e.target.value })}
-                                  className="col-span-3"
-                                />
-                              </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="edit-email" className="text-right">
-                                  Email
-                                </Label>
-                                <Input
-                                  id="edit-email"
-                                  value={editingUser?.email}
-                                  onChange={(e) => setEditingUser({ ...editingUser!, email: e.target.value })}
-                                  className="col-span-3"
-                                />
-                              </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="edit-role" className="text-right">
-                                  Role
-                                </Label>
-                                <Input
-                                  id="edit-role"
-                                  value={editingUser?.role}
-                                  onChange={(e) => setEditingUser({ ...editingUser!, role: e.target.value })}
-                                  className="col-span-3"
-                                />
-                              </div>
-                            </div>
-                            <Button onClick={updateUser}>Update User</Button>
-                          </DialogContent>
+  <DialogHeader>
+    <DialogTitle>Edit User</DialogTitle>
+  </DialogHeader>
+  <div className="grid gap-4 py-4">
+    <div className="grid grid-cols-4 items-center gap-4">
+      <Label htmlFor="edit-name" className="text-right">
+        Name
+      </Label>
+      <Input
+        id="edit-name"
+        value={editingUser?.name}
+        onChange={(e) => setEditingUser({ ...editingUser!, name: e.target.value })}
+        className="col-span-3"
+      />
+    </div>
+    <div className="grid grid-cols-4 items-center gap-4">
+      <Label htmlFor="edit-email" className="text-right">
+        Email
+      </Label>
+      <Input
+        id="edit-email"
+        value={editingUser?.email}
+        onChange={(e) => setEditingUser({ ...editingUser!, email: e.target.value })}
+        className="col-span-3"
+      />
+    </div>
+    <div className="grid grid-cols-4 items-center gap-4">
+      <Label htmlFor="edit-role" className="text-right">
+        Role
+      </Label>
+      <select
+        id="edit-role"
+        value={editingUser?.role}
+        onChange={(e) => setEditingUser({ ...editingUser!, role: e.target.value })}
+        className="col-span-3 px-2 py-2 border rounded-md focus:outline-none"
+      >
+        <option value="User">User</option>
+        <option value="Admin">Admin</option>
+      </select>
+    </div>
+  </div>
+  <Button onClick={updateUser}>Update User</Button>
+</DialogContent>
                         </Dialog>
-                        <Button variant="ghost" size="icon" onClick={() => deleteUser(user.id)}>
+                        <Button variant="ghost" size="icon" onClick={() => handleDeleteUser(user.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>
