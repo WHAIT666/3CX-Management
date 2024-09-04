@@ -74,7 +74,13 @@ function AppRouter() {
         />
         <Route
           path="/dashboard/ExtensionManagement"
-          element={isAuthenticated && isVerified ? <ExtensionManagement /> : <Navigate to={isAuthenticated ? "/verify-email" : "/login"} />}
+          element={
+            isAuthenticated && isVerified ? (
+              isAdmin ? <ExtensionManagement /> : <NoAccessPage />
+            ) : (
+              <Navigate to={isAuthenticated ? "/verify-email" : "/login"} />
+            )
+          }
         />
         <Route
           path="/dashboard/users"
