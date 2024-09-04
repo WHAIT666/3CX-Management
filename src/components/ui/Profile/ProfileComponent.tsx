@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { UserIcon, ClockIcon, MailIcon, SettingsIcon } from "lucide-react";
+import { UserIcon, ClockIcon, SettingsIcon } from "lucide-react";
 import { useAuthStore } from "@/Store/AuthStore"; // Ensure your zustand store is imported
 import { formatDate } from "@/Utils/date"; // Assuming you have a formatDate utility
 
@@ -11,6 +11,7 @@ export default function InteractiveProfilePage() {
   const [profileData, setProfileData] = useState({
     name: "",
     email: "",
+    role: "", // Add role to profile data
     language: "",
     theme: "Dark",
     notifications: "Enabled",
@@ -30,6 +31,7 @@ export default function InteractiveProfilePage() {
       setProfileData({
         name: user.name || "",
         email: user.email || "",
+        role: user.role || "User", // Populate role from user
         language: user.language || "English",
         theme: user.theme || "Dark",
         notifications: user.notifications || "Enabled",
@@ -135,6 +137,9 @@ export default function InteractiveProfilePage() {
                 <p>
                   <span className="font-semibold">Email:</span> {profileData.email}
                 </p>
+                <p>
+                  <span className="font-semibold">Role:</span> {profileData.role} {/* Role displayed here */}
+                </p>
               </div>
             )}
           </CardContent>
@@ -177,7 +182,7 @@ export default function InteractiveProfilePage() {
           <CardContent>
             {editStates.preferences ? (
               <div className="space-y-4">
-                {renderSelectField("Language", "language", ["English", "Spanish", "French"])}
+                {renderSelectField("Language", "language", ["English"])}
                 {renderSelectField("Theme", "theme", ["Dark", "Light"])}
                 {renderSelectField("Notifications", "notifications", ["Enabled", "Disabled"])}
                 <Button onClick={() => handleSave("preferences")} className="mr-2">
