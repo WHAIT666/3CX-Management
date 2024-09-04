@@ -1,38 +1,26 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import loginImage from "../../assets/techbasepreto.png";
-import { login } from '../../services/api'; // Import the login function
+import loginImage from "../assets/techbasepreto.png";
+import { useAuthStore } from "../Store/AuthStore"; // Use your zustand store here
+import { Loader } from "lucide-react"; // Keep any icons or loaders you're using
 
 export default function LoginComponent({ setIsAuthenticated }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { login, isLoading, error } = useAuthStore(); // Use zustand's login logic
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-
     try {
-      const { accessToken, refreshToken, expiresIn } = await login(email, password);
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-
-      // Automatically log out the user when the token expires
-      setTimeout(() => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        setIsAuthenticated(false);
-        navigate('/login');
-      }, 3600 * 1000); // 1 hour in milliseconds
-
+      await login(email, password);
       setIsAuthenticated(true);
-      navigate('/dashboard');
-    } catch (err) {
-      setError('Login failed. Please check your credentials and try again.');
+      navigate("/dashboard");
+    } catch {
+      setIsAuthenticated(false);
     }
   };
 
@@ -42,13 +30,22 @@ export default function LoginComponent({ setIsAuthenticated }) {
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Login</h1>
-            <p className="text-balance text-muted-foreground">Enter your email below to login to your account</p>
+            <p className="text-balance text-muted-foreground">
+              Enter your email below to login to your account
+            </p>
           </div>
           <form onSubmit={handleSubmit} className="grid gap-4">
             {error && <div className="text-red-500">{error}</div>}
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
             <div className="grid gap-2">
               <div className="flex items-center">
@@ -57,10 +54,20 @@ export default function LoginComponent({ setIsAuthenticated }) {
                   Forgot your password?
                 </Link>
               </div>
-              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </div>
-            <Button type="submit" className="w-full">
-              Login
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <Loader className="w-6 h-6 animate-spin mx-auto" />
+              ) : (
+                "Login"
+              )}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
