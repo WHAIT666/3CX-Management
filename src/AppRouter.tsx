@@ -12,10 +12,11 @@ import ForgotPassword from "./pages/ForgotPasswordPage";
 import ResetPassword from "./pages/ResetPasswordPage";
 import VerifyEmail from "./pages/EmailVerificationPage";
 import NotFound from "./pages/404";
+import NoAccessPage from "./pages/NoAccessPage"; // New NoAccessPage
 import { useAuthStore } from "../src/Store/AuthStore"; // Zustand store for authentication state
 
 function AppRouter() {
-  const { isAuthenticated, isVerified, checkAuth } = useAuthStore();
+  const { isAuthenticated, isVerified, checkAuth, user } = useAuthStore();
   const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
@@ -30,6 +31,25 @@ function AppRouter() {
   if (!authChecked) {
     return <div>Loading...</div>; // Display loading spinner while checking authentication
   }
+
+  const isAdmin = user?.role === "Admin"; // Check if the user is an admin
+
+  // Admin route protection
+  const AdminRoute = ({ children }) => {
+    if (!isAuthenticated) {
+      return <Navigate to="/login" />; // Redirect to login if not authenticated
+    }
+
+    if (!isVerified) {
+      return <Navigate to="/verify-email" />; // Redirect to email verification if not verified
+    }
+
+    if (!isAdmin) {
+      return <Navigate to="/no-access" />; // Redirect to "no access" page if not an admin
+    }
+
+    return children;
+  };
 
   return (
     <Router>
@@ -59,10 +79,14 @@ function AppRouter() {
           element={isAuthenticated && !isVerified ? <VerifyEmail /> : <Navigate to="/dashboard" />}
         />
 
-        {/* Protected Dashboard routes */}
+        {/* Admin Protected Routes */}
         <Route
           path="/dashboard"
-          element={isAuthenticated && isVerified ? <Dashboard /> : <Navigate to={isAuthenticated ? "/verify-email" : "/login"} />}
+          element={
+            <AdminRoute>
+              <Dashboard />
+            </AdminRoute>
+          }
         />
         <Route
           path="/dashboard/profile"
@@ -70,20 +94,39 @@ function AppRouter() {
         />
         <Route
           path="/dashboard/ExtensionManagement"
-          element={isAuthenticated && isVerified ? <ExtensionManagement /> : <Navigate to={isAuthenticated ? "/verify-email" : "/login"} />}
+          element={
+            <AdminRoute>
+              <ExtensionManagement />
+            </AdminRoute>
+          }
         />
         <Route
           path="/dashboard/users"
-          element={isAuthenticated && isVerified ? <Users /> : <Navigate to={isAuthenticated ? "/verify-email" : "/login"} />}
+          element={
+            <AdminRoute>
+              <Users />
+            </AdminRoute>
+          }
         />
         <Route
           path="/dashboard/phones"
-          element={isAuthenticated && isVerified ? <Phones /> : <Navigate to={isAuthenticated ? "/verify-email" : "/login"} />}
+          element={
+            <AdminRoute>
+              <Phones />
+            </AdminRoute>
+          }
         />
         <Route
           path="/dashboard/groups"
-          element={isAuthenticated && isVerified ? <Groups /> : <Navigate to={isAuthenticated ? "/verify-email" : "/login"} />}
+          element={
+            <AdminRoute>
+              <Groups />
+            </AdminRoute>
+          }
         />
+
+        {/* No access route for non-admins */}
+        <Route path="/no-access" element={<NoAccessPage />} />
 
         {/* Catch-all route for 404 */}
         <Route path="*" element={<NotFound />} />
