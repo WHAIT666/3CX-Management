@@ -12,7 +12,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pi
 import { fetchUserStatistics, fetchUsers, deleteUser, updateUserRole } from "@/services/api" // Importing API services
 
 type User = {
-  id: string
+  _id: string
   name: string
   email: string
   role: string
@@ -23,7 +23,7 @@ const COLORS = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
 
 export default function EnhancedAdminPanel() {
   const [users, setUsers] = useState<User[]>([])  // Initialize with an empty array
-  const [newUser, setNewUser] = useState<Omit<User, "id" | "createdAt">>({ name: "", email: "", role: "" })
+  const [newUser, setNewUser] = useState<Omit<User, "_id" | "createdAt">>({ name: "", email: "", role: "" })
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [showStatistics, setShowStatistics] = useState(false)
   const [stats, setStats] = useState({ totalUsers: 0, adminUsers: 0, regularUsers: 0 })
@@ -58,15 +58,15 @@ export default function EnhancedAdminPanel() {
 
   const addUser = () => {
     const currentDate = new Date().toISOString().split('T')[0]
-    setUsers([...users, { ...newUser, id: users.length + 1, createdAt: currentDate }])
+    setUsers([...users, { ...newUser, _id: `${users.length + 1}`, createdAt: currentDate }])
     setNewUser({ name: "", email: "", role: "" })
   }
 
   const updateUser = async () => {
     if (editingUser) {
       try {
-        const updatedUserData = await updateUserRole(editingUser.id, editingUser.role);  // Update user role via API
-        setUsers(users.map((user) => (user.id === updatedUserData.id ? updatedUserData : user)))  // Update UI
+        const updatedUserData = await updateUserRole(editingUser._id, editingUser.role);  // Update user role via API
+        setUsers(users.map((user) => (user._id === updatedUserData._id ? updatedUserData : user)))  // Update UI
         setEditingUser(null)
       } catch (err) {
         setError("Failed to update user")
@@ -77,9 +77,10 @@ export default function EnhancedAdminPanel() {
   const handleDeleteUser = async (id: string) => {
     try {
       await deleteUser(id);  // Call API to delete user
-      setUsers(users.filter((user) => user.id !== id))  // Update UI after deletion
+      setUsers(users.filter((user) => user._id !== id))  // Update UI after deletion
     } catch (err) {
-      setError("Failed to delete user")
+      setError("Failed to delete user");
+      console.error("Error deleting user:", err);
     }
   }
 
@@ -274,12 +275,15 @@ export default function EnhancedAdminPanel() {
                       <Label htmlFor="role" className="text-right">
                         Role
                       </Label>
-                      <Input
-                        id="role"
+                      <select
+                        id="edit-role"
                         value={newUser.role}
                         onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                        className="col-span-3"
-                      />
+                        className="col-span-3 px-2 py-2 border rounded-md focus:outline-none"
+                      >
+                        <option value="User">User</option>
+                        <option value="Admin">Admin</option>
+                      </select>
                     </div>
                   </div>
                   <Button onClick={addUser}>Add User</Button>
@@ -299,7 +303,7 @@ export default function EnhancedAdminPanel() {
                 </TableHeader>
                 <TableBody>
                   {users.map((user) => (
-                    <TableRow key={user.id}>
+                    <TableRow key={user._id}>
                       <TableCell className="font-medium">{user.name}</TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell>{user.role}</TableCell>
@@ -312,51 +316,51 @@ export default function EnhancedAdminPanel() {
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
-  <DialogHeader>
-    <DialogTitle>Edit User</DialogTitle>
-  </DialogHeader>
-  <div className="grid gap-4 py-4">
-    <div className="grid grid-cols-4 items-center gap-4">
-      <Label htmlFor="edit-name" className="text-right">
-        Name
-      </Label>
-      <Input
-        id="edit-name"
-        value={editingUser?.name}
-        onChange={(e) => setEditingUser({ ...editingUser!, name: e.target.value })}
-        className="col-span-3"
-      />
-    </div>
-    <div className="grid grid-cols-4 items-center gap-4">
-      <Label htmlFor="edit-email" className="text-right">
-        Email
-      </Label>
-      <Input
-        id="edit-email"
-        value={editingUser?.email}
-        onChange={(e) => setEditingUser({ ...editingUser!, email: e.target.value })}
-        className="col-span-3"
-      />
-    </div>
-    <div className="grid grid-cols-4 items-center gap-4">
-      <Label htmlFor="edit-role" className="text-right">
-        Role
-      </Label>
-      <select
-        id="edit-role"
-        value={editingUser?.role}
-        onChange={(e) => setEditingUser({ ...editingUser!, role: e.target.value })}
-        className="col-span-3 px-2 py-2 border rounded-md focus:outline-none"
-      >
-        <option value="User">User</option>
-        <option value="Admin">Admin</option>
-      </select>
-    </div>
-  </div>
-  <Button onClick={updateUser}>Update User</Button>
-</DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Edit User</DialogTitle>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="edit-name" className="text-right">
+                                  Name
+                                </Label>
+                                <Input
+                                  id="edit-name"
+                                  value={editingUser?.name}
+                                  onChange={(e) => setEditingUser({ ...editingUser!, name: e.target.value })}
+                                  className="col-span-3"
+                                />
+                              </div>
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="edit-email" className="text-right">
+                                  Email
+                                </Label>
+                                <Input
+                                  id="edit-email"
+                                  value={editingUser?.email}
+                                  onChange={(e) => setEditingUser({ ...editingUser!, email: e.target.value })}
+                                  className="col-span-3"
+                                />
+                              </div>
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="edit-role" className="text-right">
+                                  Role
+                                </Label>
+                                <select
+                                  id="edit-role"
+                                  value={editingUser?.role}
+                                  onChange={(e) => setEditingUser({ ...editingUser!, role: e.target.value })}
+                                  className="col-span-3 px-2 py-2 border rounded-md focus:outline-none"
+                                >
+                                  <option value="User">User</option>
+                                  <option value="Admin">Admin</option>
+                                </select>
+                              </div>
+                            </div>
+                            <Button onClick={updateUser}>Update User</Button>
+                          </DialogContent>
                         </Dialog>
-                        <Button variant="ghost" size="icon" onClick={() => handleDeleteUser(user.id)}>
+                        <Button variant="ghost" size="icon" onClick={() => handleDeleteUser(user._id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>
