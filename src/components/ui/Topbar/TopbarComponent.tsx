@@ -81,6 +81,15 @@ const TopBarComponent = () => {
       </nav>
 
       <div className="flex items-center gap-4">
+        {/* Conditionally render Admin Panel link if the user is an admin */}
+        {localUser?.role === 'Admin' && (
+          <Link 
+            to="/admin"
+            className="text-sm font-semibold text-orange-600 hover:underline">
+            Admin Panel
+          </Link>
+        )}
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="cursor-pointer">

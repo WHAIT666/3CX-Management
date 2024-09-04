@@ -11,12 +11,13 @@ import Groups from "./pages/Dashboard/Groups";
 import ForgotPassword from "./pages/ForgotPasswordPage";
 import ResetPassword from "./pages/ResetPasswordPage";
 import VerifyEmail from "./pages/EmailVerificationPage";
+import AdminPage from "./pages/Dashboard/AdminPanel"; // Import the new Admin page
 import NotFound from "./pages/404";
-import NoAccessPage from "./pages/NoAccessPage"; // New NoAccessPage
+import NoAccessPage from "./pages/NoAccessPage"; // Import NoAccessPage for non-admin users
 import { useAuthStore } from "../src/Store/AuthStore"; // Zustand store for authentication state
 
 function AppRouter() {
-  const { isAuthenticated, isVerified, checkAuth, user } = useAuthStore();
+  const { isAuthenticated, isVerified, checkAuth, user } = useAuthStore(); // Fetching user for role-based access
   const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
@@ -32,24 +33,7 @@ function AppRouter() {
     return <div>Loading...</div>; // Display loading spinner while checking authentication
   }
 
-  const isAdmin = user?.role === "Admin"; // Check if the user is an admin
-
-  // Admin route protection
-  const AdminRoute = ({ children }) => {
-    if (!isAuthenticated) {
-      return <Navigate to="/login" />; // Redirect to login if not authenticated
-    }
-
-    if (!isVerified) {
-      return <Navigate to="/verify-email" />; // Redirect to email verification if not verified
-    }
-
-    if (!isAdmin) {
-      return <Navigate to="/no-access" />; // Redirect to "no access" page if not an admin
-    }
-
-    return children;
-  };
+  const isAdmin = user?.role === "Admin"; // Check if the logged-in user is an admin
 
   return (
     <Router>
@@ -79,14 +63,10 @@ function AppRouter() {
           element={isAuthenticated && !isVerified ? <VerifyEmail /> : <Navigate to="/dashboard" />}
         />
 
-        {/* Admin Protected Routes */}
+        {/* Protected Dashboard routes */}
         <Route
           path="/dashboard"
-          element={
-            <AdminRoute>
-              <Dashboard />
-            </AdminRoute>
-          }
+          element={isAuthenticated && isVerified ? <Dashboard /> : <Navigate to={isAuthenticated ? "/verify-email" : "/login"} />}
         />
         <Route
           path="/dashboard/profile"
@@ -94,39 +74,26 @@ function AppRouter() {
         />
         <Route
           path="/dashboard/ExtensionManagement"
-          element={
-            <AdminRoute>
-              <ExtensionManagement />
-            </AdminRoute>
-          }
+          element={isAuthenticated && isVerified ? <ExtensionManagement /> : <Navigate to={isAuthenticated ? "/verify-email" : "/login"} />}
         />
         <Route
           path="/dashboard/users"
-          element={
-            <AdminRoute>
-              <Users />
-            </AdminRoute>
-          }
+          element={isAuthenticated && isVerified ? <Users /> : <Navigate to={isAuthenticated ? "/verify-email" : "/login"} />}
         />
         <Route
           path="/dashboard/phones"
-          element={
-            <AdminRoute>
-              <Phones />
-            </AdminRoute>
-          }
+          element={isAuthenticated && isVerified ? <Phones /> : <Navigate to={isAuthenticated ? "/verify-email" : "/login"} />}
         />
         <Route
           path="/dashboard/groups"
-          element={
-            <AdminRoute>
-              <Groups />
-            </AdminRoute>
-          }
+          element={isAuthenticated && isVerified ? <Groups /> : <Navigate to={isAuthenticated ? "/verify-email" : "/login"} />}
         />
 
-        {/* No access route for non-admins */}
-        <Route path="/no-access" element={<NoAccessPage />} />
+        {/* Admin-only route */}
+        <Route
+          path="/admin"
+          element={isAuthenticated && isAdmin ? <AdminPage /> : <NoAccessPage />}
+        />
 
         {/* Catch-all route for 404 */}
         <Route path="*" element={<NotFound />} />

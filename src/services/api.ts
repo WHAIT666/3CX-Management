@@ -91,3 +91,16 @@ export const resetPassword = async (id: string, code: string, password: string, 
   const response = await axiosInstance.post(`/users/resetpassword/${id}/${code}`, { password, passwordConfirmation });
   return response.data;
 };
+
+
+// Fetch all users
+export const fetchUsers = async () => {
+  const response = await axios.get("/api/users"); // Adjust API endpoint as needed
+  return response.data;
+};
+
+// Update user role
+export const updateUserRole = async (userId, newRole) => {
+  const response = await axios.patch(`/api/users/${userId}/role`, { role: newRole });
+  return response.data;
+};
