@@ -50,9 +50,9 @@ export default function NoAccessPage() {
         transition={{ delay: 0.6 }}
         className="flex gap-4"
       >
-        {/* Ensure absolute path to /dashboard/profile */}
+        {/* Button with black styling */}
         <Link to="/dashboard/profile">
-          <Button variant="outline">
+          <Button className="bg-black text-white hover:bg-gray-800">
             Go to Profile
           </Button>
         </Link>
