@@ -67,14 +67,6 @@ export default function EnhancedAdminPanel() {
     return Object.entries(growth).map(([date, count]) => ({ date, count })).sort((a, b) => a.date.localeCompare(b.date))
   }, [users])
 
-  const cumulativeGrowth = useMemo(() => {
-    let total = 0
-    return userGrowth.map(({ date, count }) => {
-      total += count
-      return { date, total }
-    })
-  }, [userGrowth])
-
   return (
     <div className="flex-1 overflow-hidden">
       <div className="flex items-center justify-between p-4 border-b">
@@ -185,27 +177,6 @@ export default function EnhancedAdminPanel() {
                 </CardContent>
               </Card>
             </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <TrendingUp className="mr-2 h-4 w-4 text-muted-foreground" />
-                  Cumulative User Growth
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={cumulativeGrowth}>
-                      <XAxis dataKey="date" />
-                      <YAxis allowDecimals={false} />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="total" stroke="#8884d8" strokeWidth={2} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         ) : (
           <div className="space-y-6">
